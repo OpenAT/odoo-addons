@@ -1,0 +1,130 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* openat_produktpass
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-14 14:14+0000\n"
+"PO-Revision-Date: 2014-04-14 14:14+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: openat_produktpass
+#: field:product.product,openat_bezeichnung:0
+msgid "Article Name"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_markenname:0
+msgid "Brand Names"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_csp_nummer:0
+msgid "CSP Article ID"
+msgstr ""
+
+#. module: openat_produktpass
+#: sql_constraint:product.product:0
+msgid "CSP Article ID has to be unique!"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_ean_bestell:0
+msgid "EAN-CODE Order Unit"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_ean_verkauf:0
+msgid "EAN-CODE Unit of Sale"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_luftfeuchte:0
+msgid "Humidity"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_licht:0
+msgid "Lighting Conditions"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,name:0
+msgid "Name of Instruction"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_nettofuellgewicht:0
+msgid "Net Fill Weight in g"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_product_product
+msgid "Product"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.actions.act_window,name:openat_produktpass.openat_produktpass_lagerundtransport_action
+msgid "Product Pass: Storage / Delivery Instructions"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_menu
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_menu
+#: view:product.product:0
+msgid "Product Sheet"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_produktionsstaette:0
+msgid "Production Facility"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_produkte_menu
+msgid "Products"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:product.product,openat_referenzprodukte:0
+msgid "Reference Products"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_lagerundtransport_menu
+msgid "Storage / Transport"
+msgstr ""
+
+#. module: openat_produktpass
+#: view:openat_produktpass.lagerundtransport:0
+#: field:product.product,openat_lagerundtransport_id:0
+msgid "Storage / Transport Instructions"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_lageranweisung:0
+msgid "Storage Instructions"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_temperatur:0
+msgid "Temperature"
+msgstr ""
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_lieferanweisung:0
+msgid "Transport Instructions"
+msgstr ""
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_openat_produktpass_lagerundtransport
+msgid "openat_produktpass.lagerundtransport"
+msgstr ""
+

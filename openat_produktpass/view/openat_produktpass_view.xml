@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- More Info: https://doc.odoo.com/trunk/server/form-view-guidelines/ -->
+<openerp>
+    <data>
+        <!-- Erweiterung des product.product form views um den Reiter Produktpass -->
+        <record model="ir.ui.view" id="product_product_openat_produktpass">
+            <field name="name">product.product.openat_produktpass</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//page[@string='Information']" position="before">
+                        <page string="Product Sheet">
+                            <group>
+                                <field name="openat_csp_nummer"/>
+                                <field name="openat_bezeichnung"/>
+                                <field name="openat_markenname_ids" widget="many2many_tags" placeholder="Markennamen..."/>
+                                <field name="openat_verkehrsbezeichnung"/>
+                                <field name="openat_ean_verkauf"/>
+                                <field name="openat_ean_bestell"/>
+                                <field name="weight_net" string="Net Fill Weight (g)"/>
+                                <field name="openat_referenzprodukte"/>
+                                <field name="openat_produktionsstaette"/>
+                            </group>
+                            <separator string="Storage and Transport Instruction"/>
+                            <group>
+                                <field name="openat_lagerundtransport_id"/>
+                                <field name="openat_konservierungsmethode_id"/>
+                            </group>
+                        </page>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+        <!-- openat_produktpass form, tree, search view and action -->
+        <record model="ir.ui.view" id="openat_produktpass_form">
+            <field name="name">openat_produktpass_form</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <form string="Product Pass" version="7.0">
+                    <header>
+                        <button name="button_tocheck"  states="ppnew,ppapproved" string="To Check" type="object"/>
+                        <button name="button_approved" states="pptocheck" string="Approve" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="ppnew,pptocheck,ppapproved"/>
+                    </header>
+                    <sheet>
+                        <field name="image_medium" widget='image' class="oe_avatar oe_right" options='{"preview_image": "image_medium", "size": [128, 128]}'/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Internal Name"/>
+                                <field name="openat_csp_nummer" placeholder="CSP Article ID"/>
+                            </h1>
+                            <field name="categ_id"/>
+                        </div>
+                        <hr class="oe_clear" style="color: white; height: 12px; border: none;"/>
+                        <group>
+                            <group>
+                                <field name="openat_bezeichnung"/>
+                                <field name="openat_markenname_ids" widget="many2many_tags" placeholder="Markennamen..."/>
+                                <field name="openat_verkehrsbezeichnung"/>
+                                <field name="openat_referenzprodukte"/>
+                                <field name="openat_produktionsstaette" context="{'show_address': 1}"/>
+                            </group>
+                            <group>
+                                <field name="openat_ean_verkauf"/>
+                                <field name="openat_ean_bestell"/>
+                                <field name="openat_auslobungen"/>
+                                <field name="openat_kennzeichnung_id"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Basics">
+                                <group>
+                                    <group string="Units">
+                                        <field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)"/>
+                                        <field name="uom_po_id" groups="product.group_uom"/>
+                                        <field name="uos_id" groups="product.group_uos"/>
+                                        <field name="uos_coeff" groups="product.group_uos"/>
+                                        <field name="mes_type" groups="product.group_uos"/>
+                                    </group>
+                                    <group string="Weight">
+                                        <field name="weight_net" string="Net Fill Weight (g)"/>
+                                        <field name="openat_tara"/>
+                                        <field name="weight"/>
+                                    </group>
+                                </group>
+                                <label for="packaging" class="oe_horizontal_separator oe_clear"/>
+                                <field name="packaging" groups="product.group_stock_packaging">
+                                    <form string="Packaging" version="7.0">
+                                        <group col="4">
+                                            <field name="ean"/>
+                                            <field name="sequence" invisible="1"/>
+                                            <newline/>
+                                            <field name="qty"/>
+                                            <field name="ul"/>
+                                            <field name="weight_ul"/>
+                                            <separator colspan="4" string="Palletization"/>
+                                            <field name="ul_qty"/>
+                                            <field name="rows"/>
+                                            <field name="weight"/>
+                                            <separator colspan="4" string="Pallet Dimension"/>
+                                            <field name="height"/>
+                                            <field name="width"/>
+                                            <field name="length"/>
+                                        </group>
+                                        <separator colspan="4" string="Description"/>
+                                        <field name="name"/>
+                                    </form>
+                                </field>
+                                <group string="Storage and Transport Instructions">
+                                    <field name="openat_lagerundtransport_id"/>
+                                    <field name="openat_temperatur"/>
+                                    <field name="openat_luftfeuchte"/>
+                                    <field name="openat_licht"/>
+                                    <field name="openat_lageranweisung"/>
+                                    <field name="openat_lieferanweisung"/>
+                                    <field name="openat_lt_beschreibung"/>
+                                </group>
+                                <group string="Preservation Method">
+                                    <field name="openat_konservierungsmethode_id"/>
+                                    <field name="openat_temp"/>
+                                    <field name="openat_zeit"/>
+                                    <field name="openat_schutzbegasung"/>
+                                    <field name="openat_gaszusammensetzung"/>
+                                    <field name="openat_km_beschreibung"/>
+                                </group>
+                                <group string="Expiry">
+                                    <field name="life_time" string="Expiry (days)"/>
+                                    <field name="use_time" string="Remaining Life (days)"/>
+                                    <field name="removal_time"/>
+                                    <field name="alert_time"/>
+                                </group>
+                                <group string="Miscellaneous">
+                                    <field name="openat_zubereitungshinweise"/>
+                                    <field name="openat_ifs"/>
+                                    <field name="openat_genusstauglichkeitskennzeichen"/>
+                                    <field name="openat_display"/>
+                                </group>
+                                <label for="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
+                                <field name="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
+                            </page>
+                            <page string="Ingredients / Nutritional Value">
+                                <div style="margin: 2em 0 1.5em 0; color: grey; font-size: 10px">Zutatenliste laut LMIV inkl. QUID - Regelung</div>
+                                <label for="openat_zutatenliste" class="oe_edit_only"/>
+                                <field name="openat_zutatenliste" placeholder="Zutatenliste laut LMIV inkl. QUID - Regelung"/>
+                                <group string="Nutritional Value">
+                                    <group>
+                                        <field name="openat_brennwert_kj" color="red"/>
+                                        <field name="openat_brennwert_kcal"/>
+                                        <field name="openat_fett"/>
+                                        <field name="openat_gesaettigte_fettsauren"/>
+                                        <field name="openat_einfach_ungesaettigte_fettsauren"/>
+                                        <field name="openat_mehrfach_ungesaettigte_fettsauren"/>
+                                    </group>
+                                    <group>
+                                        <field name="openat_kohlenhydrate"/>
+                                        <field name="openat_kohlenhydrate_zucker"/>
+                                        <field name="openat_ballaststoffe"/>
+                                        <field name="openat_eiweiss"/>
+                                        <field name="openat_natrium"/>
+                                        <field name="openat_salz"/>
+                                    </group>
+                                </group>
+                                <div style="margin-bottom: 3em; color: grey;">
+                                    <span style="font-weight: bold">*BIG 7 (verpflichtend nach LMIV)</span><br />
+                                    Referenzmenge für einen durchschnittlichen Erwachsenen (8400 kJ/2000 kcal). Salz (NaCl) berechnet aus Natrium.
+                                </div>
+                                <group>
+                                    <field name="openat_be"/>
+                                </group>
+                            </page>
+                            <page string="Other Ingredients / Chem.">
+                                <div style="margin: 2em 0 1.5em 0; color: grey; font-size: 10px">
+                                    Details über: Zusammensetzung von Gewürzen und Aromen. Den pflanzlichen Ursprung von Ölen, Fetten usw. Art der Kräuter wenn anwendbar. Verwendete Mikroorganismen bei Joghurt bzw. eingesetzte Kulturen ect..
+                                </div>
+                                <label for="openat_rohstoffe" class="oe_edit_only"/>
+                                <field name="openat_rohstoffe" placeholder="Other Ingredients / Details"/>
+                                <group string="Chem. Assay">
+                                    <group>
+                                        <field name="openat_chem_wasser"/>
+                                        <field name="openat_chem_fett"/>
+                                        <field name="openat_chem_eiweiss"/>
+                                        <field name="openat_chem_kohlenhydrate"/>
+                                    </group>
+                                    <group>
+                                        <field name="openat_chem_wasser_kodex"/>
+                                        <field name="openat_chem_fett_kodex"/>
+                                        <field name="openat_chem_eiweiss_kodex"/>
+                                        <field name="openat_chem_kohlenhydrate_kodex"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Allergens">
+                                <group string="Allergens">
+                                    <field name="openat_allergene_getreide"/>
+                                    <field name="openat_allergene_getreide_text" attrs="{'invisible': [('openat_allergene_getreide','=', False)]}"/>
+                                    <field name="openat_allergene_krebstiere"/>
+                                    <field name="openat_allergene_krebstiere_text" attrs="{'invisible': [('openat_allergene_krebstiere','=', False)]}"/>
+                                    <field name="openat_allergene_weichtiere"/>
+                                    <field name="openat_allergene_weichtiere_text" attrs="{'invisible': [('openat_allergene_weichtiere','=', False)]}"/>
+                                    <field name="openat_allergene_ei"/>
+                                    <field name="openat_allergene_ei_text" attrs="{'invisible': [('openat_allergene_ei','=', False)]}"/>
+                                    <field name="openat_allergene_fisch"/>
+                                    <field name="openat_allergene_fisch_text" attrs="{'invisible': [('openat_allergene_fisch','=', False)]}"/>
+                                    <field name="openat_allergene_erdnuesse"/>
+                                    <field name="openat_allergene_erdnuesse_text" attrs="{'invisible': [('openat_allergene_erdnuesse','=', False)]}"/>
+                                    <field name="openat_allergene_soja"/>
+                                    <field name="openat_allergene_soja_text" attrs="{'invisible': [('openat_allergene_soja','=', False)]}"/>
+                                    <field name="openat_allergene_milch"/>
+                                    <field name="openat_allergene_milch_text" attrs="{'invisible': [('openat_allergene_milch','=', False)]}"/>
+                                    <field name="openat_allergene_schalenf"/>
+                                    <field name="openat_allergene_schalenf_text" attrs="{'invisible': [('openat_allergene_schalenf','=', False)]}"/>
+                                    <field name="openat_allergene_lupine"/>
+                                    <field name="openat_allergene_lupine_text" attrs="{'invisible': [('openat_allergene_lupine','=', False)]}"/>
+                                    <field name="openat_allergene_sellerie"/>
+                                    <field name="openat_allergene_sellerie_text" attrs="{'invisible': [('openat_allergene_sellerie','=', False)]}"/>
+                                    <field name="openat_allergene_senf"/>
+                                    <field name="openat_allergene_senf_text" attrs="{'invisible': [('openat_allergene_senf','=', False)]}"/>
+                                    <field name="openat_allergene_sesam"/>
+                                    <field name="openat_allergene_sesam_text" attrs="{'invisible': [('openat_allergene_sesam','=', False)]}"/>
+                                    <field name="openat_allergene_so2_sulfite"/>
+                                    <field name="openat_allergene_so2_sulfite_text" attrs="{'invisible': [('openat_allergene_so2_sulfite','=', False)]}"/>
+                                </group>
+                                <div style="margin-bottom: 3em; color: grey;">(Allergene laut LMKV 1993 i.d.g.F.)</div>
+                            </page>
+                            <page string="Mikrob.">
+                                <group string="Mikrobiologischen Grenzwerte in KBE / g">
+                                    <group>
+                                        <div style="color: grey;">Bei Ende MHD - Richtwert</div>
+                                        <div style="padding-left: 1em; color: grey;">bei Ende MHD - Höchstwert</div>
+                                        <group>
+                                            <field name="openat_mikrob_norm_keim"/>
+                                            <field name="openat_mikrob_norm_clost"/>
+                                            <field name="openat_mikrob_norm_coli"/>
+                                            <field name="openat_mikrob_norm_entero"/>
+                                            <field name="openat_mikrob_norm_staphy"/>
+                                            <field name="openat_mikrob_norm_lacto"/>
+                                            <field name="openat_mikrob_norm_cerus"/>
+                                            <field name="openat_mikrob_norm_hefen"/>
+                                            <field name="openat_mikrob_norm_schimmel"/>
+                                            <field name="openat_mikrob_norm_salmonellen"/>
+                                            <field name="openat_mikrob_norm_listeria"/>
+                                            <field name="openat_mikrob_norm_ehec"/>
+                                        </group>
+                                        <group>
+                                            <field name="openat_mikrob_max_keim"/>
+                                            <field name="openat_mikrob_max_clost"/>
+                                            <field name="openat_mikrob_max_coli"/>
+                                            <field name="openat_mikrob_max_entero"/>
+                                            <field name="openat_mikrob_max_staphy"/>
+                                            <field name="openat_mikrob_max_lacto"/>
+                                            <field name="openat_mikrob_max_cerus"/>
+                                            <field name="openat_mikrob_max_hefen"/>
+                                            <field name="openat_mikrob_max_schimmel"/>
+                                            <field name="openat_mikrob_max_salmonellen"/>
+                                            <field name="openat_mikrob_max_listeria"/>
+                                            <field name="openat_mikrob_max_ehec"/>
+                                        </group>
+                                    </group>
+                                </group>
+                                <div style="margin-bottom: 3em; color: grey; font-size: 10px;">
+                                    Muss mindestens den Grenzen der Verordnung EG Nr. 2073/2005 der Kommission über
+                                    mikrobiologische Kriterien für Lebensmittel und der DGHM entprechend.
+                                    Siehe: <a href="http://www.dghm.org/m_275">http://www.dghm.org/m_275</a>
+                                </div>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" help="Follow the Changes of this Prdouct Pass"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_tree">
+            <field name="name">openat_produktpass_tree</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <tree string="Product Pass" version="7.0">
+                    <field name="openat_csp_nummer"/>
+                    <field name="name"/>
+                    <field name="openat_bezeichnung"/>
+                    <field name="openat_verkehrsbezeichnung"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_search">
+            <field name="name">openat_produktpass_search</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <search string="Product Pass" version="7.0">
+                    <field name="openat_csp_nummer"/>
+                    <field name="name"/>
+                    <field name="openat_bezeichnung"/>
+                    <field name="openat_verkehrsbezeichnung"/>
+                    <field name="openat_ean_verkauf"/>
+                    <field name="openat_ean_bestell"/>
+                </search>
+            </field>
+        </record>
+        <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
+        <record model="ir.actions.act_window" id="openat_produktpass_action">
+            <field name="name">Product Pass</field>
+            <field name="res_model">product.product</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="openat_produktpass_tree"/>
+            <field name="search_view_id" ref="openat_produktpass_search"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="openat_produktpass_action_view_tree">
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="openat_produktpass_tree"/>
+            <field name="act_window_id" ref="openat_produktpass_action"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="openat_produktpass_action_view_form">
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="openat_produktpass_form"/>
+            <field name="act_window_id" ref="openat_produktpass_action"/>
+        </record>
+        <!-- openat_produktpass.lagerundtransport form, tree und search View -->
+        <record model="ir.ui.view" id="openat_produktpass_lagerundtransport_form">
+            <field name="name">openat_produktpass.lagerundtransport_form</field>
+            <field name="model">openat_produktpass.lagerundtransport</field>
+            <field name="arch" type="xml">
+                <form string="Storage / Transport Instructions" version="7.0">
+                    <group>
+                        <field name="name"/>
+                        <field name="openat_temperatur"/>
+                        <field name="openat_luftfeuchte"/>
+                        <field name="openat_licht"/>
+                        <field name="openat_lageranweisung"/>
+                        <field name="openat_lieferanweisung"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_lagerundtransport_tree">
+            <field name="name">openat_produktpass.lagerundtransport_tree</field>
+            <field name="model">openat_produktpass.lagerundtransport</field>
+            <field name="arch" type="xml">
+                <tree string="Storage / Transport Instructions" version="7.0">
+                    <field name="name"/>
+                    <field name="openat_temperatur"/>
+                    <field name="openat_luftfeuchte"/>
+                    <field name="openat_lageranweisung"/>
+                    <field name="openat_lieferanweisung"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="openat_produktpass_lagerundtransport_search">
+            <field name="name">openat_produktpass.lagerundtransport_search</field>
+            <field name="model">openat_produktpass.lagerundtransport</field>
+            <field name="arch" type="xml">
+                <search string="Storage / Transport Instructions" version="7.0">
+                    <field name="name"/>
+                    <field name="openat_temperatur"/>
+                    <field name="openat_luftfeuchte"/>
+                    <field name="openat_licht"/>
+                    <field name="openat_lageranweisung"/>
+                    <field name="openat_lieferanweisung"/>
+                </search>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="openat_produktpass_lagerundtransport_action">
+            <field name="name">Product Pass: Storage / Delivery Instructions</field>
+            <field name="res_model">openat_produktpass.lagerundtransport</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="openat_produktpass_lagerundtransport_tree"/>
+            <field name="search_view_id" ref="openat_produktpass_lagerundtransport_search"/>
+        </record>
+        <!-- Menueeintraege -->
+        <menuitem id="openat_produktpass_menu" name="Product Pass" sequence="10"/>
+        <menuitem id="openat_produktpass_produktpass_menu" name="Product Sheet" parent="openat_produktpass_menu" sequence="20"/>
+        <menuitem id="openat_produktpass_produktpass_produkte_menu" name="Products" parent="openat_produktpass_produktpass_menu" action="product.product_normal_action" sequence="30"/>
+        <menuitem id="openat_produktpass_produktpass_main_menu" name="Product Pass" parent="openat_produktpass_produktpass_menu" action="openat_produktpass_action" sequence="40"/>
+        <menuitem id="openat_produktpass_produktpass_lagerundtransport_menu" name="Storage / Transport" parent="openat_produktpass_produktpass_menu" action="openat_produktpass_lagerundtransport_action" sequence="50"/>
+    </data>
+</openerp>

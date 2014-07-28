@@ -1,0 +1,130 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* openat_produktpass
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-14 14:16+0000\n"
+"PO-Revision-Date: 2014-04-14 14:16+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: openat_produktpass
+#: field:product.product,openat_bezeichnung:0
+msgid "Article Name"
+msgstr "Artikelbezeichnung"
+
+#. module: openat_produktpass
+#: field:product.product,openat_markenname:0
+msgid "Brand Names"
+msgstr "Markenname"
+
+#. module: openat_produktpass
+#: field:product.product,openat_csp_nummer:0
+msgid "CSP Article ID"
+msgstr "CSP Artikelnummer"
+
+#. module: openat_produktpass
+#: sql_constraint:product.product:0
+msgid "CSP Article ID has to be unique!"
+msgstr "Die CSP Artikelnummer ist bereits vergeben!"
+
+#. module: openat_produktpass
+#: field:product.product,openat_ean_bestell:0
+msgid "EAN-CODE Order Unit"
+msgstr "EAN-CODE der Bestelleinheit"
+
+#. module: openat_produktpass
+#: field:product.product,openat_ean_verkauf:0
+msgid "EAN-CODE Unit of Sale"
+msgstr "EAN-CODE der Verkaufseinheit"
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_luftfeuchte:0
+msgid "Humidity"
+msgstr "Luftfeuchtigkeit"
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_licht:0
+msgid "Lighting Conditions"
+msgstr "Licht Bedingungen"
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,name:0
+msgid "Name of Instruction"
+msgstr "Name der Anweisung"
+
+#. module: openat_produktpass
+#: field:product.product,openat_nettofuellgewicht:0
+msgid "Net Fill Weight in g"
+msgstr "Netto-Füllgewicht in g"
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_product_product
+msgid "Product"
+msgstr "Produkt"
+
+#. module: openat_produktpass
+#: model:ir.actions.act_window,name:openat_produktpass.openat_produktpass_lagerundtransport_action
+msgid "Product Pass: Storage / Delivery Instructions"
+msgstr "Produktpass: Lager- und Transportbedingungen"
+
+#. module: openat_produktpass
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_menu
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_menu
+#: view:product.product:0
+msgid "Product Sheet"
+msgstr "Produktpass"
+
+#. module: openat_produktpass
+#: field:product.product,openat_produktionsstaette:0
+msgid "Production Facility"
+msgstr "Produktionsstätte"
+
+#. module: openat_produktpass
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_produkte_menu
+msgid "Products"
+msgstr "Produkte"
+
+#. module: openat_produktpass
+#: field:product.product,openat_referenzprodukte:0
+msgid "Reference Products"
+msgstr "Benchmark / Referenzprodukte"
+
+#. module: openat_produktpass
+#: model:ir.ui.menu,name:openat_produktpass.openat_produktpass_produktpass_lagerundtransport_menu
+msgid "Storage / Transport"
+msgstr "Lagerung / Transport"
+
+#. module: openat_produktpass
+#: view:openat_produktpass.lagerundtransport:0
+#: field:product.product,openat_lagerundtransport_id:0
+msgid "Storage / Transport Instructions"
+msgstr "Lager- und Transportbedingungen"
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_lageranweisung:0
+msgid "Storage Instructions"
+msgstr "Lageranweisung"
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_temperatur:0
+msgid "Temperature"
+msgstr "Temperatur"
+
+#. module: openat_produktpass
+#: field:openat_produktpass.lagerundtransport,openat_lieferanweisung:0
+msgid "Transport Instructions"
+msgstr "Transportanweisung"
+
+#. module: openat_produktpass
+#: model:ir.model,name:openat_produktpass.model_openat_produktpass_lagerundtransport
+msgid "openat_produktpass.lagerundtransport"
+msgstr "openat_produktpass.lagerundtransport"
+
