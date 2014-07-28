@@ -10,5 +10,5 @@
     ''',
     'depends': ['sale', 'mail'],
     'data': ['surcharge_type_view.xml', 'product_view.xml', 'sale_view.xml', 'update_surcharge.xml'],
-    'installable': True,
+    'installable': False,
 }

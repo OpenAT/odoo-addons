@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
+#    OpenERP, Open Source Management Solution
+#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
+#
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
 #    published by the Free Software Foundation, either version 3 of the
@@ -17,24 +20,23 @@
 ##############################################################################
 
 {
-    'name': "OpenAT Partner Full Hierarchy",
-    'version': "1.0",
+    'name': "OpenAT Kundennummernsuche",
+    'version': "1.1",
     'category': "Tools",
-    'summary': "openat_partner_hierarchy",
+    'summary': "openat_partnernumber_search_everywhere",
     'description': """
-Enable the use of a parent partner or company for non companies also (parent_id for all).
-Various enhancements for the res.partner.kanban res.partner.form and res.partner.tree views
-ToDo: add a new openat_parent_id_full field to display all parents of a res.partner and not just the next level
+        This module allows you to search not only by the Partner Name in many2many or many2one fields but also for the unique field openat_ref_unique, brought to you by the openat module openat_partnernumber_unique. Other fields from res.partner could also be easely added for the search if needed. 
+		
+		ATTENTION: this module rewrites the standard search for partners - if there are changes from openerp to the standard search this module has to be updated to!
     """,
     'author': "OpenAT",
     'website': "http://www.OpenAT.at",
-	'css': [],
     'images': [],
-    'depends': ['base'],
-    'data': ['openat_partner_fullhierarchy.xml'],
+    'depends': ['base', 'openat_partnernumber_unique'],
+    'data': ['openat_partnernumber_search_everywhere_view.xml'],
     'demo': [],
     'test': [],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': False,
 }

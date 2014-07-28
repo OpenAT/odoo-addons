@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    OpenAT
-#
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
 #    published by the Free Software Foundation, either version 3 of the
@@ -19,29 +17,29 @@
 ##############################################################################
 
 {
-    'name': "OpenAT Produktpass",
-    'version': "1.1",
+    'name': "OpenAT Global BCC",
+    'version': "1.0",
     'category': "Tools",
-    'summary': "openat_produktpass",
+    'summary': "openat_globalbcc",
     'description': """
-Dieses Addon erweiter product.product um eine Vielzahl neuer Felder die speziell fuer die Lebensmittelindusttrie
-relevant sind. Diese neuen Felder sind in Reiter gegliedert und nur über spezielle Zugangsrechte sichtbar.
+		Sämtliche E-Mails die von OpenERP gesendet werden werden mittels bcc an eine Mailadresse weitergeleitet.
 
-Die Produkte koennen entweder wie gewohnt in OpenERP angeleget werden oder aber über eine Schnittstelle zu CSP
-importiert angelegt oder aktualisiert werde.
-
-Einige Daten fuer Produkte die aus CSP importiert wurden können noch durch Informationen des Programmes NUTS ergaenzt
-werden. Dies kann ebenfalls automatisch auf der Basis eines CSV-Exports von NUTS erledigt werden.
+		Die Mailadresse für die Weiterleitung kann dabei pro Modell (z.B.: project.task) festgelegt werden.
     """,
-    'author': "OpenAT",
+    'author': "OpenAT und Camadeus",
     'website': "http://www.OpenAT.at",
-	'css' : ['static/src/css/style.css'],
+	'css': [],
     'images': [],
-    'depends': ['base', 'product', 'product_expiry', 'stock', 'purchase', ],
-    'data': ['view/openat_produktpass_view.xml'],
+    'depends': ['base','mail'],
+    'update_xml':['openat_globalbcc_view.xml',
+                  'security/ir.model.access.csv'
+                  ],
+    'data': [],
     'demo': [],
     'test': [],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
-    'application': True,
+    'application': False,
 }
+
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -60,7 +60,7 @@ Weiters findet sich in dem Ordner des Addons ein Beispiel-Python-Script für den
         ],
     'demo': [],
     'test': [],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': True,
 }

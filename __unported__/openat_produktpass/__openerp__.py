@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #
-#    OpenERP, Open Source Management Solution
-#    Copyright (C) 2004-2010 Tiny SPRL (<http://tiny.be>).
+#    OpenAT
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -20,25 +19,29 @@
 ##############################################################################
 
 {
-    'name': "OpenAT Kundennummernsuche",
+    'name': "OpenAT Produktpass",
     'version': "1.1",
     'category': "Tools",
-    'summary': "openat_partnernumber_search_everywhere",
+    'summary': "openat_produktpass",
     'description': """
-        This module allows you to search not only by the Partner Name in many2many or many2one fields but also for the unique field openat_ref_unique, brought to you by the openat module openat_partnernumber_unique. Other fields from res.partner could also be easely added for the search if needed. 
-		
-		ATTENTION: this module rewrites the standard search for partners - if there are changes from openerp to the standard search this module has to be updated to!
+Dieses Addon erweiter product.product um eine Vielzahl neuer Felder die speziell fuer die Lebensmittelindusttrie
+relevant sind. Diese neuen Felder sind in Reiter gegliedert und nur über spezielle Zugangsrechte sichtbar.
+
+Die Produkte koennen entweder wie gewohnt in OpenERP angeleget werden oder aber über eine Schnittstelle zu CSP
+importiert angelegt oder aktualisiert werde.
+
+Einige Daten fuer Produkte die aus CSP importiert wurden können noch durch Informationen des Programmes NUTS ergaenzt
+werden. Dies kann ebenfalls automatisch auf der Basis eines CSV-Exports von NUTS erledigt werden.
     """,
     'author': "OpenAT",
     'website': "http://www.OpenAT.at",
+	'css' : ['static/src/css/style.css'],
     'images': [],
-    'depends': ['base', 'openat_partnernumber_unique'],
-    'data': ['openat_partnernumber_search_everywhere_view.xml'],
+    'depends': ['base', 'product', 'product_expiry', 'stock', 'purchase', ],
+    'data': ['view/openat_produktpass_view.xml'],
     'demo': [],
     'test': [],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
-    'application': False,
+    'application': True,
 }
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

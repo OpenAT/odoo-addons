@@ -14,7 +14,7 @@ This module extends the task and issue view
     'depends': ['project', 'project_issue'],
     'summary': 'Projects, Tasks, Issues',
     'data': ['project_view.xml','project_task_view.xml'],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
 }
 

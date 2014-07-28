@@ -36,7 +36,7 @@
     'data': ['openat_crm_salesorder_view.xml'],
     'demo': [],
     'test': [],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': False,
 }

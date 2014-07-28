@@ -58,7 +58,7 @@ ATTENTION: You will have to write custom aeroo-reports for sales orders and invo
     "init_xml" : [],
     'update_xml' : ["openat_aeroo_reports_extensions.xml"],
     "demo_xml" : [],
-    'installable': True,
+    'installable': False,
     'active': False,
     'application': False,
 }

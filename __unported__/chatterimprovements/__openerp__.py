@@ -49,6 +49,6 @@ Chatter Improvements
     'update_xml': ['chatter_improvements_view.xml',
                    ],
     'demo_xml': [],
-    'installable': True,
+    'installable': False,
     'active': False,
 }

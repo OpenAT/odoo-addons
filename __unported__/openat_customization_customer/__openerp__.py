@@ -40,7 +40,7 @@ geachtet werden dass hier alle diese Module bei den Abhängigkeiten eingetragen 
     'data': ['openat_customization_customer_view.xml'],
     'demo': [],
     'test': [],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': False,
 }

@@ -17,27 +17,24 @@
 ##############################################################################
 
 {
-    'name': "OpenAT Global BCC",
+    'name': "OpenAT Partner Full Hierarchy",
     'version': "1.0",
     'category': "Tools",
-    'summary': "openat_globalbcc",
+    'summary': "openat_partner_hierarchy",
     'description': """
-		Sämtliche E-Mails die von OpenERP gesendet werden werden mittels bcc an eine Mailadresse weitergeleitet.
-
-		Die Mailadresse für die Weiterleitung kann dabei pro Modell (z.B.: project.task) festgelegt werden.
+Enable the use of a parent partner or company for non companies also (parent_id for all).
+Various enhancements for the res.partner.kanban res.partner.form and res.partner.tree views
+ToDo: add a new openat_parent_id_full field to display all parents of a res.partner and not just the next level
     """,
-    'author': "OpenAT und Camadeus",
+    'author': "OpenAT",
     'website': "http://www.OpenAT.at",
 	'css': [],
     'images': [],
-    'depends': ['base','mail'],
-    'update_xml':['openat_globalbcc_view.xml',
-                  'security/ir.model.access.csv'
-                  ],
-    'data': [],
+    'depends': ['base'],
+    'data': ['openat_partner_fullhierarchy.xml'],
     'demo': [],
     'test': [],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': False,
 }
