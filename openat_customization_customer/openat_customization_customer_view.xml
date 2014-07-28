@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<openerp>
+  <data>
+
+    <!-- Einige Beispiele für das Anpassen von Views - besser ist es Xpath zu verwenden - siehe unten!  -->
+    <!-- ============================================================================================== -->
+
+	<!-- Alte "field" Beispiele: -->
+
+    <!-- Verschieben der Position des neuen Feldes Kundennummer gleich unter die Partnerkategorie
+    <record id="openat_customization_mod01" model="ir.ui.view">
+		<field name="name">res.partner.form.openat_customization_mod01</field>
+		<field name="model">res.partner</field>
+		<field name="inherit_id" ref="openat_partnernumber_unique.openat_partnernumber_unique_field"/>
+		<field name="arch" type="xml">
+			<field name="openat_ref_unique" position="replace"/>
+			<field name="category_id" position="after">
+				<label for="openat_ref_unique" string="Kundennummer"/>
+				<field name="openat_ref_unique" required="0"/>
+			</field>
+		</field>
+    </record>
+    -->
+
+    
+    <!-- Verschieben der Position des Feldes Kunden bei Aufgaben direkt hinter das Feld geplante Stunden
+    <record id="openat_customization_mod02" model="ir.ui.view">
+		<field name="name">project.task.form.openat_customization_mod02</field>
+		<field name="model">project.task</field>
+		<field name="inherit_id" ref="project.view_task_form2"/>
+		<field name="arch" type="xml">
+			<field name="partner_id" position="replace"/>
+			<field name="planned_hours" position="after">
+				<field name="partner_id"/>
+			</field>
+		</field>
+    </record>
+    -->
+
+
+    <!-- Neue Xpath Beispiele: -->
+
+    <!-- Elemente vor einem anderen hinzufügen
+
+    <xpath expr="//h4[@class='oe_partner_heading']" position="before">
+        <div style="display: none"><field name="name"/></div>
+    </xpath>
+
+    -->
+
+    <!-- In diesem Beipsiel wird entweder das Attribut attrs überschrieben, wenn es schon existiert hat,
+         oder es wird neu hinzugefügt. Man kann "attrs" natürlich durch jeden beliebigen String ersetzen!
+
+    <xpath expr="//page[@string='Contacts']" position="attributes">
+        <attribute name="attrs"> </attribute>
+    </xpath>
+
+    -->
+
+
+  </data>
+</openerp>

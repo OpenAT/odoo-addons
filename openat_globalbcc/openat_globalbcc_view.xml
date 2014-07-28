@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    
+        <record model="ir.ui.view" id="openat_customization_globalbcc_form">
+            <field name="model">mail.bcc</field>
+            <field name="arch" type="xml">
+                <form string="Email BCC Config" version="7.0">
+                  <sheet string="Email BCC Config">
+                    <div class="oe_title">
+                        <label for="openat_mail_bcc" string="BCC Email Address"/>
+	                    <h1>
+	                        <field name="openat_mail_bcc" placeholder="example@example.com" class="oe_inline" colspan="4"/> 
+	                    </h1>
+                    </div>
+                    <newline/>
+                    <newline/>
+                    <group col="2">
+                    	<field name="openat_sequence"/>
+                        <field name="openat_model_id" placeholder="e.g. Sales Order"/>
+                    </group>
+                  </sheet>  
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="openat_customization_globalbcc_tree">
+            <field name="model">mail.bcc</field>
+            <field name="arch" type="xml">
+                <tree string="Email BCC Config">
+                    <field name="openat_sequence"/>
+                    <field name="openat_model_id"/>
+                    <field name="openat_mail_bcc"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="openat_customization_globalbcc_search" model="ir.ui.view">
+            <field name="model">mail.bcc</field>
+            <field name="arch" type="xml">
+                <search string="Email BCC Config">
+                    <field name="openat_model_id"/>
+                    <field name="openat_sequence"/>
+                    <field name="openat_mail_bcc"/>
+                </search>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="openat_customization_globalbcc_action">
+            <field name="name">BCC Config</field>
+            <field name="res_model">mail.bcc</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="openat_customization_globalbcc_tree" />
+            <field name="search_view_id" ref="openat_customization_globalbcc_search"/>
+        </record>
+        
+        <menuitem id="openat_customization_globalbcc_menu" parent="base.menu_email" action="openat_customization_globalbcc_action" sequence="40" groups="base.group_no_one"/>
+    </data>
+</openerp>

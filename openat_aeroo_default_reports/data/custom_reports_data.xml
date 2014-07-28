@@ -1,0 +1,14 @@
+<openerp>
+    <data noupdate="1">
+
+        <!--Email templates for sale order portal and invoice portal -->
+        <record id="portal_sale.email_template_edi_sale" model="email.template">
+            <field name="report_template" ref="action_report_sale_order_openat"/>
+        </record>
+
+        <record id="portal_sale.email_template_edi_invoice" model="email.template">
+            <field name="report_template" ref="action_report_account_invoice_openat"/>
+        </record>
+
+    </data>
+</openerp>

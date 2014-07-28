@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_order_form_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit.surcharge</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <data>                   
+                	<xpath expr="//page[@string='Order Lines']/field[@name='order_line']/form[@string='Sales Order Lines']/label[@for='name']" position="before">
+						<group>
+                        	<group>
+                        		<field name="surcharge_invisible" invisible='1'/>
+                    			<field name="metal_number" attrs="{'invisible': [('surcharge_invisible','!=',False)]}"
+                    				on_change="onchange_surcharge(product_id, metal_number, metal_base, del_number, product_uom_qty, price_unit, discount_amount_temp, context)"/>
+                    			<field name="metal_base" attrs="{'invisible': [('surcharge_invisible','!=',False)]}"
+                    				on_change="onchange_surcharge(product_id, metal_number, metal_base, del_number, product_uom_qty, price_unit, discount_amount_temp, context)"/>
+                    			<field name="surcharge_temp" attrs="{'invisible': [('surcharge_invisible','!=',False)]}" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                    			<field name="surcharge" invisible='1'/>
+                    			<field name="sub_total" invisible='1'/>
+                    			<field name="sub_total_temp" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                    		</group>
+                    		<group>
+                    			<field name="del_number" attrs="{'invisible': [('surcharge_invisible','!=',False)]}"
+                    				on_change="onchange_surcharge(product_id, metal_number, metal_base, del_number, product_uom_qty, price_unit, discount_amount_temp, context)"/>
+                    			<field name="last_update" attrs="{'invisible': [('surcharge_invisible','!=',False)]}"/>
+                    			<field name="discount_amount_temp" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                    			<field name="discount_amount" invisible='1'/>
+                    			<field name="currency_id" invisible='1'/>                    			
+                    		</group>
+                    	</group>		
+                   	</xpath>
+                   	<xpath expr="//page[@string='Order Lines']/field[@name='order_line']/form[@string='Sales Order Lines']/group/group/div/field[@name='discount']" position="replace">
+                   		<field name="discount" class="oe_inline" on_change="onchange_discount(discount, surcharge_temp, product_uom_qty, price_unit)"/> %%
+                   	</xpath>
+                   	<xpath expr="//page[@string='Order Lines']/field[@name='order_line']/form[@string='Sales Order Lines']/group/group/field[@name='price_unit']" position="replace">
+                   		<field name="price_unit" on_change="onchange_discount(discount, surcharge_temp, product_uom_qty, price_unit)"/>								
+                   	</xpath>
+                   	<xpath expr="//page[@string='Order Lines']/field[@name='order_line']/form[@string='Sales Order Lines']/group/group/field[@name='product_id']" position="replace">                   		
+						<field name="product_id"
+                        	context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'shop':parent.shop_id, 'uom':product_uom, 'discount':discount}"
+                            groups="base.group_user"
+                            on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, True, parent.date_order, False, parent.fiscal_position, False, context)"/>		
+                   	</xpath>
+                   	<xpath expr="//page[@string='Order Lines']/field[@name='order_line']/form[@string='Sales Order Lines']/group/group/div/field[@name='product_uom_qty']" position="replace">                   		
+						<field
+                        	context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'shop':parent.shop_id, 'uom':product_uom, 'discount':discount}"
+                            name="product_uom_qty" class="oe_inline"
+                            on_change="product_id_change(parent.pricelist_id, product_id, product_uom_qty, product_uom, product_uos_qty, product_uos, name, parent.partner_id, False, False, parent.date_order, False, parent.fiscal_position, True, context)"/>		
+                   	</xpath>
+                </data>
+           </field>
+        </record>
+
+    </data>
+</openerp>

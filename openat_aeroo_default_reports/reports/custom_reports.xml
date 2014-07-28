@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='utf-8'?>
+<openerp>
+  <data noupdate='0'>
+    <record model='ir.actions.report.xml' id='action_report_account_invoice_openat'>
+      <field search="[(u'code', '=', u'oo-pdf')]" name='out_format'/>
+      <field name='active' eval='True'/>
+      <field name='attachment_use' eval='False'/>
+      <field name='charset'>utf_8</field>
+      <field name='copies' eval='1'/>
+      <field name='in_format'>oo-odt</field>
+      <field name='model'>account.invoice</field>
+      <field name='multi' eval='False'/>
+      <field name='name'>Default Invoice</field>
+      <field name='parser_state'>loc</field>
+      <field name='parser_loc'>openat_aeroo_default_reports/reports/parser_invoice.py</field>
+      <field name='preload_mode'>static</field>
+      <field name='process_sep' eval='True'/>
+      <field name='report_name'>account.invoice.openat</field>
+      <field name='report_rml'>openat_aeroo_default_reports/reports/report_invoice_out.odt</field>
+      <field name='report_type'>aeroo</field>
+      <field name='report_wizard' eval='False'/>
+      <field name='styles_mode'>default</field>
+      <field name='tml_source'>file</field>
+      <field name='type'>ir.actions.report.xml</field>
+      <field name='fallback_false' eval='False'/>
+    </record>
+    <record model='ir.actions.report.xml' id='action_report_sale_order_openat'>
+      <field search="[(u'code', '=', u'oo-pdf')]" name='out_format'/>
+      <field name='active' eval='True'/>
+      <field name='attachment_use' eval='False'/>
+      <field name='charset'>utf_8</field>
+      <field name='copies' eval='1'/>
+      <field name='in_format'>oo-odt</field>
+      <field name='model'>sale.order</field>
+      <field name='multi' eval='False'/>
+      <field name='name'>Default Quotation/Sales-Order</field>
+      <field name='parser_state'>loc</field>
+      <field name='parser_loc'>openat_aeroo_default_reports/reports/parser_saleorder.py</field>
+      <field name='preload_mode'>static</field>
+      <field name='process_sep' eval='True'/>
+      <field name='report_name'>sale.order.openat</field>
+      <field name='report_rml'>openat_aeroo_default_reports/reports/report_sales_order.odt</field>
+      <field name='report_type'>aeroo</field>
+      <field name='report_wizard' eval='False'/>
+      <field name='styles_mode'>default</field>
+      <field name='tml_source'>file</field>
+      <field name='type'>ir.actions.report.xml</field>
+      <field name='fallback_false' eval='False'/>
+    </record>
+    <record model='ir.actions.report.xml' id='action_report_delivery_order_openat'>
+      <field search="[(u'code', '=', u'oo-pdf')]" name='out_format'/>
+      <field name='active' eval='True'/>
+      <field name='attachment_use' eval='False'/>
+      <field name='charset'>utf_8</field>
+      <field name='copies' eval='1'/>
+      <field name='in_format'>oo-odt</field>
+      <field name='model'>stock.picking.out</field>
+      <field name='multi' eval='False'/>
+      <field name='name'>Default Delivery Order</field>
+      <field name='parser_state'>default</field>
+      <field name='preload_mode'>static</field>
+      <field name='process_sep' eval='True'/>
+      <field name='report_name'>stock.picking.out.openat</field>
+      <field name='report_rml'>openat_aeroo_default_reports/reports/report_delivery_order_out.odt</field>
+      <field name='report_type'>aeroo</field>
+      <field name='report_wizard' eval='False'/>
+      <field name='styles_mode'>default</field>
+      <field name='tml_source'>file</field>
+      <field name='type'>ir.actions.report.xml</field>
+      <field name='fallback_false' eval='False'/>
+    </record>
+    <record model='ir.actions.report.xml' id='action_report_purchase_order_openat'>
+      <field search="[(u'code', '=', u'oo-pdf')]" name='out_format'/>
+      <field name='active' eval='True'/>
+      <field name='attachment_use' eval='False'/>
+      <field name='charset'>utf_8</field>
+      <field name='copies' eval='1'/>
+      <field name='in_format'>oo-odt</field>
+      <field name='model'>purchase.order</field>
+      <field name='multi' eval='False'/>
+      <field name='name'>Default Purchase Order</field>
+      <field name='parser_state'>default</field>
+      <field name='preload_mode'>static</field>
+      <field name='process_sep' eval='True'/>
+      <field name='report_name'>purchase.order.openat</field>
+      <field name='report_rml'>openat_aeroo_default_reports/reports/report_purchase_order.odt</field>
+      <field name='report_type'>aeroo</field>
+      <field name='report_wizard' eval='False'/>
+      <field name='styles_mode'>default</field>
+      <field name='tml_source'>file</field>
+      <field name='type'>ir.actions.report.xml</field>
+      <field name='fallback_false' eval='False'/>
+    </record>
+    <record model='ir.actions.report.xml' id='action_report_overdue_payments_openat'>
+      <field search="[(u'code', '=', u'oo-pdf')]" name='out_format'/>
+      <field name='active' eval='True'/>
+      <field name='attachment_use' eval='False'/>
+      <field name='charset'>utf_8</field>
+      <field name='copies' eval='1'/>
+      <field name='in_format'>oo-odt</field>
+      <field name='model'>res.partner</field>
+      <field name='multi' eval='False'/>
+      <field name='name'>Overdue Payments</field>
+      <field name='parser_state'>loc</field>
+      <field name='parser_loc'>openat_aeroo_default_reports/reports/parser_overdue.py</field>
+      <field name='preload_mode'>static</field>
+      <field name='process_sep' eval='True'/>
+      <field name='report_name'>overdue.payments.openat</field>
+      <field name='report_rml'>openat_aeroo_default_reports/reports/report_overdue_payments.odt</field>
+      <field name='report_type'>aeroo</field>
+      <field name='report_wizard' eval='False'/>
+      <field name='styles_mode'>default</field>
+      <field name='tml_source'>file</field>
+      <field name='type'>ir.actions.report.xml</field>
+      <field name='fallback_false' eval='False'/>
+    </record>
+    <record model='ir.actions.report.xml' id='account_followup_followup_print_openat'>
+      <field search="[(u'code', '=', u'oo-pdf')]" name='out_format'/>
+      <field name='active' eval='True'/>
+      <field name='attachment_use' eval='False'/>
+      <field name='charset'>utf_8</field>
+      <field name='copies' eval='1'/>
+      <field name='in_format'>oo-odt</field>
+      <field name='model'>account_followup.followup</field>
+      <field name='multi' eval='False'/>
+      <field name='name'>Follow-up Report</field>
+      <field name='parser_state'>loc</field>
+      <field name='parser_loc'>openat_aeroo_default_reports/reports/account_followup_print.py</field>
+      <field name='preload_mode'>static</field>
+      <field name='process_sep' eval='True'/>
+      <field name='report_name'>account_followup.followup.print.openat</field>
+      <field name='report_rml'>openat_aeroo_default_reports/reports/account_followup_print.odt</field>
+      <field name='report_type'>aeroo</field>
+      <field name='report_wizard' eval='False'/>
+      <field name='styles_mode'>default</field>
+      <field name='tml_source'>file</field>
+      <field name='type'>ir.actions.report.xml</field>
+      <field name='fallback_false' eval='False'/>
+    </record>
+  </data>
+</openerp>

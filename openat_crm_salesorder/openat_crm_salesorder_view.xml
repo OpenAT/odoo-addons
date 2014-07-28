@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+
+<openerp>
+	<data>
+		
+	  <record id="openat_crm_salesorder_tree" model="ir.ui.view">
+    	<field name="name">sale.order.openat_crm_salesorder.tree</field>
+		<field name="model">sale.order</field>
+		<field name="arch" type="xml">
+		  <tree string="Verkaufsauftrag (CRM)" editable="top">                 
+                 <field name="name"/>
+                 <field name="message_unread" invisible="1"/>
+                 <field name="date_order"/>
+                 <field name="openat_saleorder_datedone"/>
+                 <field name="partner_id"/>
+                 <field name="openat_saleorder_advisor"/>
+                 <field name="user_id"/>
+                 <field name="amount_total" sum="Total Tax Included"/>
+                 <field name="amount_untaxed" invisible="1"/>
+                 <field name="openat_saleorder_chance" string="Wahrscheinlichkeit in Prozent" on_change="calculate_sum('openat_saleorder_chance','amount_untaxed')"/>
+                 <field name="openat_saleorder_revenue" sum="Erwartet" />
+                 <field name="project_id" invisible="1"/>
+                 <field name="state"/>
+          </tree>
+		</field>    
+      </record> 
+      
+      <record id="openat_crm_salesorder_tree_search" model="ir.ui.view">
+      	<field name="name">sale.order.openat_crm_salesorder.tree.search</field>
+      	<field name="model">sale.order</field>
+      	<field name="arch" type="xml">
+				<search string="Verkaufsauftrag CRM">
+                    <field name="name" string="Sales Order" filter_domain="['|',('name','ilike',self),('client_order_ref','ilike',self)]"/>
+                    <filter icon="terp-mail-message-new" string="Unread Messages" name="message_unread" domain="[('message_unread','=',True)]"/>
+                    <separator/>
+                    <filter icon="terp-document-new" string="Quotations" name="draft" domain="[('state','in',('draft','sent'))]" help="Sales Order that haven't yet been confirmed"/>
+                    <filter icon="terp-check" string="Sales" name="sales" domain="[('state','in',('manual','progress'))]"/>
+                    <filter icon="terp-dolar_ok!" string="To Invoice" domain="[('state','=','manual')]" help="Sales Order ready to be invoiced"/>
+                    <filter icon="terp-dolar_ok!" string="Done" domain="[('state','=','done')]" help="Sales Order done"/>
+                    <separator/>
+                    <filter string="My Sales Orders" domain="[('user_id','=',uid)]" help="My Sales Orders" icon="terp-personal" name="my_sale_orders_filter"/>
+                    <field name="partner_id"/>
+                    <field name="user_id"/>
+                    <field name="project_id"/>
+                    <group expand="0" string="Group By...">
+                        <filter string="Customer" icon="terp-personal" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Salesperson" icon="terp-personal" domain="[]" context="{'group_by':'user_id'}"/>
+                        <filter string="Sachbearbeiter" icon="terp-personal" domain="[]" context="{'group_by':'openat_saleorder_advisor'}" />
+                        <filter string="Status" icon="terp-stock_effects-object-colorize" domain="[]" context="{'group_by':'state'}"/>
+                        <filter string="Monat" icon="terp-go-month" domain="[]" context="{'group_by':'date_order'}"/>
+                        <filter string="Projekt" domain="[]" context="{'group_by':'project_id'}"/>
+                    </group>
+               </search>
+      	</field>
+      </record>
+      
+      <record id="openat_crm_salesorder" model="ir.actions.act_window">
+			<field name="name">Verkaufsaufträge (CRM)</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">sale.order</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree</field>
+			<field name="view_id" ref="openat_crm_salesorder.openat_crm_salesorder_tree"/>
+			<field name="search_view_id" ref="openat_crm_salesorder.openat_crm_salesorder_tree_search" />
+			<field name="context">{}</field>
+			<field name="domain">[('state','not in',('cancel','manual','shipping_except','invoice_except','done'))]</field>
+		</record>
+		
+	  <menuitem action="openat_crm_salesorder" id="menu_sale_order_crm" parent="base.menu_sales" sequence="5" groups="base.group_sale_salesman,base.group_sale_manager"/>
+	  
+	</data>
+</openerp>

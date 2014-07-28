@@ -1,0 +1,47 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* openat_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-05-06 14:30+0000\n"
+"PO-Revision-Date: 2014-05-06 14:30+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: openat_base
+#: model:project.task.type,name:openat_base.project_tt_inprogress
+msgid "In Progress"
+msgstr ""
+
+#. module: openat_base
+#: model:project.task.type,name:openat_base.project_tt_new
+msgid "New"
+msgstr ""
+
+#. module: openat_base
+#: model:project.task.type,name:openat_base.project_tt_planned
+msgid "Planned"
+msgstr ""
+
+#. module: openat_base
+#: model:project.task.type,name:openat_base.project_tt_waiting
+msgid "Waiting"
+msgstr ""
+
+#. module: openat_base
+#: model:ir.model,name:openat_base.model_ir_cron
+msgid "ir.cron"
+msgstr ""
+
+#. module: openat_base
+#: model:ir.model,name:openat_base.model_openat_base
+msgid "openat_base"
+msgstr ""
+

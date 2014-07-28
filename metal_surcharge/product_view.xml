@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="product_normal_form_view" model="ir.ui.view">
+            <field name="name">product.normal.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="priority">5</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <data>                   
+                	<xpath expr="//page[@string='Information']/group" position="inside">
+						<group>
+                        	<field name="metal_surcharge_type" on_change="onchange_surcharge_type(metal_surcharge_type)"/>
+                            <field name="metal_number"/>
+                            <field name="metal_base"/>
+                            <field name="del_number_temp" />
+                            <field name="del_number" invisible='1'/>
+                            <field name="last_update_temp"/>
+                            <field name="last_update" invisible='1'/>
+                    	</group>		
+                   	</xpath>                
+                </data>
+            </field>
+        </record>
+
+    </data>
+</openerp>

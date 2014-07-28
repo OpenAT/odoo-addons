@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<openerp>
+  <data>
+    <!--sale.order form-->
+    <record model='ir.ui.view' id='view_openat_aeroo_report_extensions_sale_order_form_inherit'>
+      <field name='name'>sale.order.openat_aeroo_report_extensions.form.inherit</field>
+      <field name='model'>sale.order</field>
+      <field ref='sale.view_order_form' name='inherit_id'/>
+      <field type='xml' name='arch'>
+        <data>
+          <field name="date_order" position="after">
+            <field name="openat_salesorder_valid_date"/>
+          </field>
+          <xpath expr="//sheet/notebook//field[@name='order_line']/tree/field[@name='product_id']" position='before'>
+            <field name='hide_price' string="H"/>
+            <field name='optional' string="ET"/>
+            <field name='hide_subtotal' string="ES"/>
+          </xpath>
+          <xpath expr="//sheet/notebook//field[@name='order_line']/form//div[@name='discount']" position='after'>
+            <field name='optional'/>
+            <field name='hide_price'/>
+            <field name='hide_subtotal'/>
+          </xpath>
+          <field name="pricelist_id" position="after">
+            <field name="openat_report_incl_image"/>
+            <field name="openat_report_incl_description"/>
+          </field>
+        </data>
+      </field>
+    </record>
+    <!-- -->
+    <!--account.invoice form-->
+    <record model='ir.ui.view' id='account_invoice_hideprice_form'>
+      <field name='name'>account.invoice.hideprice.form.inherit</field>
+      <field name='model'>account.invoice</field>
+      <field ref='account.invoice_form' name='inherit_id'/>
+      <field type='xml' name='arch'>
+        <data>
+          <xpath expr="//sheet/notebook//field[@name='invoice_line']/tree/field[@name='product_id']" position='before'>
+            <field name='hide_price' string="H"/>
+            <field name='hide_subtotal' string="ES"/>
+          </xpath>
+        </data>
+      </field>
+    </record>
+    <!-- -->
+  </data>
+</openerp>
+

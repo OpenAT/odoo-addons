@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_surcharge_type_search" model="ir.ui.view">
+            <field name="name">product.metal.surcharge.type.search</field>
+            <field name="model">product.metal.surcharge.type</field>
+            <field name="arch" type="xml">
+                <search string="Surcharge Types">
+                    <field name="name" string="Surcharge Type"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_surcharge_type_tree" model="ir.ui.view">
+            <field name="name">product.metal.surcharge.type.tree</field>
+            <field name="model">product.metal.surcharge.type</field>
+            <field name="arch" type="xml">
+                <tree string="Surcharge Types">
+                    <field name="name"/>
+                    <!--<field name="last_update"/>
+                    <field name="rate"/>-->
+                </tree>
+            </field>
+        </record>
+        <record id="view_surcharge_type_form" model="ir.ui.view">
+            <field name="name">product.metal.surcharge.type.form</field>
+            <field name="model">product.metal.surcharge.type</field>
+            <field name="arch" type="xml">
+                <form string="Currency" version="7.0">
+                    <group col="4">
+                        <field name="name" colspan="4"/>
+                        <field name="source_url" colspan="4"/>                                                
+                        <field name="last_update"/>
+                        <field name="rate"/>
+                    </group>
+                    <field mode="tree" name="rate_ids">
+                        <tree string="Rates" editable="bottom">
+                            <field name="name"/>
+                            <field name="rate"/>
+                        </tree>
+                    </field>
+                </form>
+            </field>
+        </record>
+        
+        <record id="action_surcharge_type_form" model="ir.actions.act_window">
+            <field name="name">Metal Surcharge Types</field>
+            <field name="res_model">product.metal.surcharge.type</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_surcharge_type_search"/>
+        </record>
+
+        <menuitem action="action_surcharge_type_form" id="menu_action_surcharge_type_form" parent="base.menu_base_config" sequence="3"/>
+
+
+    </data>
+</openerp>

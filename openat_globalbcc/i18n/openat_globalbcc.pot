@@ -1,0 +1,81 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* openat_globalbcc
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0-20130910-231130\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-11-19 13:29+0000\n"
+"PO-Revision-Date: 2013-11-19 13:29+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#: view:mail.bcc:0
+#. module: openat_globalbcc
+msgid "e.g. Sales Order"
+msgstr "z.B. Angebot (sale.order)"
+
+#: view:mail.bcc:0
+#. module: openat_globalbcc
+msgid "example@example.com"
+msgstr "beispiel@beispiel.de"
+
+#: model:ir.model,name:openat_globalbcc.model_mail_bcc
+#: view:mail.bcc:0
+#. module: openat_globalbcc
+msgid "Email BCC Config"
+msgstr "Email BCC Config"
+
+#: field:mail.bcc,openat_sequence:0
+#. module: openat_globalbcc
+msgid "Sequence"
+msgstr "Sequenz"
+
+#: model:ir.model,name:openat_globalbcc.model_ir_mail_server
+#. module: openat_globalbcc
+msgid "ir.mail_server"
+msgstr "ir.mail_server"
+
+#: help:mail.bcc,openat_sequence:0
+#. module: openat_globalbcc
+msgid "Sequence is used for ordering. If there exist more than one record for specific model, the one with the lowest sequence is chosen."
+msgstr "Die Sequenz ist für die Sortierung zuständig. Falls mehr als ein BCC-Email für ein Model definiert wurde, wird das mit der kleinsten Sequenz verwendet."
+
+#: help:mail.bcc,openat_mail_bcc:0
+#. module: openat_globalbcc
+msgid "This address is added to the BCC list of every sent email."
+msgstr "Diese E-mail Adresse wird als BCC-Empfänger hinzugefügt."
+
+#: field:mail.bcc,openat_mail_bcc:0
+#. module: openat_globalbcc
+msgid "BCC Mail Address"
+msgstr "BCC E-Mail Addresse"
+
+#: help:mail.bcc,openat_model_id:0
+#. module: openat_globalbcc
+msgid "Specify the name of the model to apply BCC.\n"
+"Leave this empty if you want to apply it to all sent emails."
+msgstr "Das Model (Objekt) gibt an, für welche emails der BCC Empfänger hinzugefügt werden soll."
+"Falls Sie kein Model (Objekt) angeben, wird für jede verschickte email der BCC hinzugefügt."
+
+#: model:ir.actions.act_window,name:openat_globalbcc.openat_customization_globalbcc_action
+#: model:ir.ui.menu,name:openat_globalbcc.openat_customization_globalbcc_menu
+#. module: openat_globalbcc
+msgid "BCC Config"
+msgstr "BCC Konfiguration"
+
+#: view:mail.bcc:0
+#. module: openat_globalbcc
+msgid "BCC Email Address"
+msgstr "BCC Email Addresse"
+
+#: field:mail.bcc,openat_model_id:0
+#. module: openat_globalbcc
+msgid "Model"
+msgstr "Model (Objekt)"
+
