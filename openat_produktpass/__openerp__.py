@@ -20,7 +20,7 @@
 
 {
     'name': "OpenAT Produktpass",
-    'version': "1.1",
+    'version': "1.2",
     'category': "Tools",
     'summary': "openat_produktpass",
     'description': """
@@ -38,7 +38,14 @@ werden. Dies kann ebenfalls automatisch auf der Basis eines CSV-Exports von NUTS
 	'css' : ['static/src/css/style.css'],
     'images': [],
     'depends': ['base', 'product', 'product_expiry', 'stock', 'purchase', ],
-    'data': ['view/openat_produktpass_view.xml'],
+    'data': ['view/openat_produktpass_view.xml',
+             'view/openat_produktpass_markenname_view.xml',
+             'view/openat_produktpass_lagerundtransport_view.xml',
+             'view/openat_produktpass_konservierungsmethode_view.xml',
+             'view/openat_produktpass_kennzeichnung_view.xml',
+             'view/openat_produktpass_display_view.xml',
+             'view/openat_produktpass_menu.xml'
+             ],
     'demo': [],
     'test': [],
     'installable': True,

@@ -57,7 +57,6 @@ class product_template(osv.Model):
             if newstate not in self._columns['state'].selection:
                 self._columns['state'].selection.append(newstate)
 
-
 product_template()
 
 
@@ -356,7 +355,6 @@ class product_product(osv.Model):
         # self.check_valid_import(cr, uid, fields, data, context=context)
         return super(product_product, self).load(cr, uid, fields, data, context=context)
 
-
 product_product()
 
 
@@ -374,15 +372,15 @@ markenname()
 class lagerundtransport(osv.Model):
     _name = 'openat_produktpass.lagerundtransport'
     _columns = {
+        'openat_produktpass_ids': fields.one2many('product.product', 'openat_lagerundtransport_id', 'Product Pass'),
         'name': fields.char('Name of Instruction', size=256, required=True, translate=False),
-        'openat_temperatur': fields.integer('Temperature'),
-        'openat_luftfeuchte': fields.integer('Humidity'),
+        'openat_temperatur': fields.integer('Temperature °C'),
+        'openat_luftfeuchte': fields.integer('Humidity %'),
         'openat_licht': fields.text('Lighting Conditions'),
         'openat_lageranweisung': fields.text('Storage Instructions'),
         'openat_lieferanweisung': fields.text('Transport Instructions'),
         'openat_beschreibung': fields.text('Storage and Transport Method Description'),
     }
-
 
 lagerundtransport()
 
@@ -390,14 +388,14 @@ lagerundtransport()
 class konservierungsmethode(osv.Model):
     _name = 'openat_produktpass.konservierungsmethode'
     _columns = {
+        'openat_produktpass_ids': fields.one2many('product.product', 'openat_konservierungsmethode_id', 'Product Pass'),
         'name': fields.char('Preservation Method (Short Name)', size=256, required=True, translate=False),
-        'openat_temp': fields.integer('Preservation Method Temperature (°C)'),
+        'openat_temp': fields.integer('Preservation Method Temperature °C'),
         'openat_zeit': fields.char('Preservation Method Time'),
         'openat_schutzbegasung': fields.char('Preservation Method Protective Gas'),
         'openat_gaszusammensetzung': fields.text('Preservation Method Gas Types'),
         'openat_beschreibung': fields.text('Preservation Method Description'),
     }
-
 
 konservierungsmethode()
 
@@ -405,10 +403,10 @@ konservierungsmethode()
 class kennzeichnung(osv.Model):
     _name = 'openat_produktpass.kennzeichnung'
     _columns = {
+        'openat_produktpass_ids': fields.one2many('product.product', 'openat_kennzeichnung_id', 'Product Pass'),
         'name': fields.char('Name of Instruction', size=256, required=True, translate=True),
         'openat_beschreibung': fields.text('Temperature', required=True, translate=True)
     }
-
 
 kennzeichnung()
 
@@ -421,6 +419,5 @@ class display(osv.Model):
         'openat_bezeichnung': fields.text('Description', translate=True),
         'openat_eancode': fields.text('EAN-Code', translate=True)
     }
-
 
 display()
