@@ -50,7 +50,7 @@
                                 <field name="name" placeholder="Internal Name"/>
                                 <field name="openat_csp_nummer" placeholder="CSP Article ID"/>
                             </h1>
-                            <field name="categ_id"/>
+                            <div style="margin: 4px 0;"><field name="categ_id"/></div>
                         </div>
                         <hr class="oe_clear" style="color: white; height: 12px; border: none;"/>
                         <group>
@@ -68,6 +68,21 @@
                                 <field name="openat_kennzeichnung_id"/>
                             </group>
                         </group>
+                        <div style="color: grey; font-size: 10px;" id="pp_access">
+                            <group>
+                                <group>
+                                    <field name="create_uid"/>
+                                    <field name="create_date"/>
+                                    <field name="write_uid"/>
+                                    <field name="write_date"/>
+                                </group>
+                                <group>
+                                    <field name="date_init"/>
+                                    <field name="date_update"/>
+                                    <field name="product_manager"/>
+                                </group>
+                            </group>
+                        </div>
                         <notebook>
                             <page string="Basics">
                                 <group>
@@ -107,6 +122,22 @@
                                         <field name="name"/>
                                     </form>
                                 </field>
+                                <group>
+                                    <group string="Expiry">
+                                        <field name="life_time" string="Expiry (days)"/>
+                                        <field name="use_time" string="Remaining Life (days)"/>
+                                        <field name="removal_time"/>
+                                        <field name="alert_time"/>
+                                    </group>
+                                    <group string="Miscellaneous">
+                                        <field name="openat_zubereitungshinweise"/>
+                                        <field name="openat_ifs"/>
+                                        <field name="openat_genusstauglichkeitskennzeichen"/>
+                                        <field name="openat_display"/>
+                                    </group>
+                                </group>
+                                <label for="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
+                                <field name="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
                                 <group string="Storage and Transport Instructions">
                                     <field name="openat_lagerundtransport_id"/>
                                     <field name="openat_temperatur"/>
@@ -124,20 +155,7 @@
                                     <field name="openat_gaszusammensetzung"/>
                                     <field name="openat_km_beschreibung"/>
                                 </group>
-                                <group string="Expiry">
-                                    <field name="life_time" string="Expiry (days)"/>
-                                    <field name="use_time" string="Remaining Life (days)"/>
-                                    <field name="removal_time"/>
-                                    <field name="alert_time"/>
-                                </group>
-                                <group string="Miscellaneous">
-                                    <field name="openat_zubereitungshinweise"/>
-                                    <field name="openat_ifs"/>
-                                    <field name="openat_genusstauglichkeitskennzeichen"/>
-                                    <field name="openat_display"/>
-                                </group>
-                                <label for="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
-                                <field name="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
+
                             </page>
                             <page string="Ingredients / Nutritional Value">
                                 <div style="margin: 2em 0 1.5em 0; color: grey; font-size: 10px">Zutatenliste laut LMIV inkl. QUID - Regelung</div>

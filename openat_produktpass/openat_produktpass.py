@@ -3,9 +3,9 @@
 #
 # OpenAT
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Affero General Public License as
-#    published by the Free Software Foundation, either version 3 of the
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
 #    License, or (at your option) any later version.
 #
 #    This program is distributed in the hope that it will be useful,
@@ -57,13 +57,64 @@ class product_template(osv.Model):
             if newstate not in self._columns['state'].selection:
                 self._columns['state'].selection.append(newstate)
 
+
 product_template()
 
 
 class product_product(osv.Model):
     _name = 'product.product'
     _inherit = 'product.product'
+
+    '''
+    def _get_irmodeldata(self, cr, uid, ids, field_name, arg, context=None):
+        # !!! make sure the field field_name exists (has the same name) in ir.model.data !!!
+        irmodeldata = self.pool.get('ir.model.data')
+        ret = {}
+        for id in ids:
+            ret[id] = irmodeldata.read(cr,
+                                       uid,
+                                       irmodeldata.search(cr,
+                                                          uid,
+                                                          [('model', '=', 'product.product'),
+                                                           ('res_id', '=', id)],
+                                                          context=context),
+                                       context=context)[0][field_name]
+        print 'Import Date: ret: %s' % ret
+        return ret
+    '''
+
+    # Versuch der speed Optimierung :)
+    def _get_irmodeldata(self, cr, uid, ids, field_name, arg, context=None):
+        print '_get_irmodeldata -> ids: %s' % ids
+        # !!! make sure the field field_name exists (has the same name) in ir.model.data !!!
+        irmodeldata = self.pool.get('ir.model.data')
+        irmodeldata_records = irmodeldata.read(cr,
+                                               uid,
+                                               irmodeldata.search(cr,
+                                                                  uid,
+                                                                  [('model', '=', 'product.product'),
+                                                                   ('res_id', 'in', ids)],
+                                                                  context=context),
+                                               context=context)
+        # es ist nicht sicher das auch für jede der ids die suche ein ergebniss liefert aber im suchergebniss
+        # sind bereits beide wichtigen felder enthalten res_id und field_name (z.B.: date_init)
+        # [{'res_id': 43, 'date_init': '2014-07-24 22:03:07'}, {'res_id': 43, 'date_init': '2014-07-24 22:03:07'}]
+        # nun muss die liste mit den dicst noch in ein reines dict umgewandelt werden
+        print '_get_irmodeldata -> irmodeldata_records: %s' % irmodeldata_records
+        ret = {record['res_id']: record[field_name] for record in irmodeldata_records if record['res_id']}
+        print 'Import Date: ret: %s' % ret
+        return ret
+
+
     _columns = {
+        # Access Fields
+        'create_uid': fields.many2one('res.users', 'Created by', readonly=True),
+        'create_date': fields.datetime('Creation Date', readonly=True),
+        'write_uid': fields.many2one('res.users', 'Changed by', readonly=True),
+        'write_date': fields.datetime('Change Date', readonly=True),
+        'date_init': fields.function(_get_irmodeldata, string='First Import Date', type='datetime', readonly=True),
+        'date_update': fields.function(_get_irmodeldata, string='Last Import Date', type='datetime', readonly=True),
+        #
         'openat_csp_nummer': fields.char('CSP Article ID', size=64, required=True, translate=False, readonly=True,
                                          states={'ppnew': [('required', False), ('readonly', False)]}),
         'openat_bezeichnung': fields.char('Article Name', translate=True),
@@ -169,7 +220,8 @@ class product_product(osv.Model):
         'openat_allergene_sesam': fields.boolean('Sesamsamen u. -erzeugnisse'),
         'openat_allergene_sesam_text': fields.text('Sesamsamen u. -erzeugnisse', translate=True),
         'openat_allergene_so2_sulfite': fields.boolean('SO2 u. Sulfite [c > 10 mg/kg od. 10 mg/L as SO2]'),
-        'openat_allergene_so2_sulfite_text': fields.text('SO2 u. Sulfite [c > 10 mg/kg od. 10 mg/L as SO2]', translate=True),
+        'openat_allergene_so2_sulfite_text': fields.text('SO2 u. Sulfite [c > 10 mg/kg od. 10 mg/L as SO2]',
+                                                         translate=True),
         # Die richtige Kennzeichnung wird ausgwaehlt
         'openat_kennzeichnung_id': fields.many2one('openat_produktpass.kennzeichnung',
                                                    'Austrian Labeling'),
@@ -223,18 +275,11 @@ class product_product(osv.Model):
         # DISPLAY
         'openat_display': fields.boolean('Display'),
         'openat_display_ids': fields.one2many('openat_produktpass.display', 'produktpass_id', 'Displaysortierung'),
-        #
-        # TODO 3 Function Fields
-        #
-        #'openat_firsimport'
-        #'openat_lastimport'
-        #'letzteaenderung'
     }
     _defaults = {
         'state': 'ppnew',
     }
     _sql_constraints = [('openat_csp_nummer_unique', 'unique(openat_csp_nummer)', 'CSP Article ID has to be unique!')]
-
 
     def check_valid_call(self, cr, uid, ids, context=None):
         productpass = self.read(cr, uid, ids, ['openat_csp_nummer'], context=context)
@@ -259,7 +304,7 @@ class product_product(osv.Model):
         print 'UID: %s' % uid
         print 'IDS: %s' % ids
         print 'Context: %s' % context
-        print 'self.read name: %s ' % self.read(cr, uid, ids, ['openat_csp_nummer'])
+        print 'self.read name: %s ' % self.read(cr, uid, ids, ['openat_csp_nummer'], context=context)
         #print 'Alle Attribute von product.product: %s' % dir(self)
         #print '---'
 
@@ -267,7 +312,7 @@ class product_product(osv.Model):
         # The Answer is a List with embedded dictionaries of the form [{'id': 5, 'openat_cps_nummer': '123456'}, {...}]
         productpasses = self.read(cr, uid, ids, ['openat_csp_nummer'], context=context)
 
-        # Ensure that there where records found
+        # Only go on if product.product entries with a openat_csp_nummer where found
         if productpasses:
             # Get the object ir.model.data
             irmodeldata = self.pool.get('ir.model.data')
@@ -275,13 +320,15 @@ class product_product(osv.Model):
             # Browse through the found productpasses records: pprecord is a dict {'id': 5, 'openat_cps_nummer': '123456'}
             for pprecord in productpasses:
                 if pprecord['openat_csp_nummer']:
-                    # ToDo: Use Message template with csv record to post message
-                    print "Try to post a Message to the Record: %s" % pprecord['id']
 
+                    '''
+                    # ToDo: Use correct Message template with all csv records to post message
+                    print "Try to post a Message to the Record: %s" % pprecord['id']
                     template_obj = self.pool.get('email.template')
                     template_id = template_obj.search(cr, uid, [('name', '=', 'MikesTemplate')])[0]
                     print 'Email Template ID: %s' % template_id
                     template_obj.send_mail(cr, uid, template_id, pprecord['id'], force_send=False, context=context)
+                    '''
 
                     # Alte Version ;)
                     #subject = 'Test Message at %s' % (lambda *a: datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -355,6 +402,7 @@ class product_product(osv.Model):
         # self.check_valid_import(cr, uid, fields, data, context=context)
         return super(product_product, self).load(cr, uid, fields, data, context=context)
 
+
 product_product()
 
 
@@ -382,6 +430,7 @@ class lagerundtransport(osv.Model):
         'openat_beschreibung': fields.text('Storage and Transport Method Description'),
     }
 
+
 lagerundtransport()
 
 
@@ -397,6 +446,7 @@ class konservierungsmethode(osv.Model):
         'openat_beschreibung': fields.text('Preservation Method Description'),
     }
 
+
 konservierungsmethode()
 
 
@@ -407,6 +457,7 @@ class kennzeichnung(osv.Model):
         'name': fields.char('Name of Instruction', size=256, required=True, translate=True),
         'openat_beschreibung': fields.text('Temperature', required=True, translate=True)
     }
+
 
 kennzeichnung()
 
@@ -419,5 +470,6 @@ class display(osv.Model):
         'openat_bezeichnung': fields.text('Description', translate=True),
         'openat_eancode': fields.text('EAN-Code', translate=True)
     }
+
 
 display()
