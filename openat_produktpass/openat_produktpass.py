@@ -6,10 +6,10 @@
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
-#    License, or (at your option) any later version.
+# License, or (at your option) any later version.
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU Affero General Public License for more details.
 #
@@ -23,6 +23,17 @@ import datetime
 from osv import osv, fields
 from openerp import tools
 from openerp.tools.translate import _
+
+
+class res_partner(osv.Model):
+    _inherit = 'res.partner'
+    _columns = {
+        'openat_produktpass_ids': fields.many2many('product.product',
+                                                   'produktpass_partner_rel', 'partner_id', 'produktpass_id',
+                                                   string='Product Passes'),
+    }
+
+res_partner()
 
 
 class product_template(osv.Model):
@@ -47,7 +58,7 @@ class product_template(osv.Model):
         # fields.selection.selection -> das bedeutet also _columns['state'].selection
         # da in _columns['state'] das Objekt fields.selection "zugewiesen" ist
         # das objekt fields.selection hat ein attribut namens selection in dem die selection list enthalten ist
-        # Deshalb kommt da auch eine Liste zurück und nicht das objekt ;)
+        # Deshalb kommt da auch eine Liste zurueck und nicht das objekt ;)
 
         # leere Elemente loeschen
         self._columns['state'].selection = [x for x in self._columns['state'].selection if x != ('', '')]
@@ -96,7 +107,7 @@ class product_product(osv.Model):
                                                                    ('res_id', 'in', ids)],
                                                                   context=context),
                                                context=context)
-        # es ist nicht sicher das auch für jede der ids die suche ein ergebniss liefert aber im suchergebniss
+        # es ist nicht sicher das auch fuer jede der ids die suche ein ergebniss liefert aber im suchergebniss
         # sind bereits beide wichtigen felder enthalten res_id und field_name (z.B.: date_init)
         # [{'res_id': 43, 'date_init': '2014-07-24 22:03:07'}, {'res_id': 43, 'date_init': '2014-07-24 22:03:07'}]
         # nun muss die liste mit den dicst noch in ein reines dict umgewandelt werden
@@ -112,8 +123,28 @@ class product_product(osv.Model):
         'create_date': fields.datetime('Creation Date', readonly=True),
         'write_uid': fields.many2one('res.users', 'Changed by', readonly=True),
         'write_date': fields.datetime('Change Date', readonly=True),
+        # Import Fields
         'date_init': fields.function(_get_irmodeldata, string='First Import Date', type='datetime', readonly=True),
+        'user_init': fields.many2one('res.users', 'First Import by', readonly=True),
         'date_update': fields.function(_get_irmodeldata, string='Last Import Date', type='datetime', readonly=True),
+        # set at import because of the load class overwritten for openat_produktpass
+        'user_update': fields.many2one('res.users', 'Last Import by', readonly=True),
+        # Should be set in the import CSV File:
+        'csp_data_date': fields.datetime('CPS-Data from', type='datetime'),
+        'nuts_data_date': fields.datetime('Nuts-Data from', type='datetime'),
+        # Approved by user at date - Auto set through Button Approved
+        'approved_user': fields.many2one('res.users', 'Approved by', readonly=True),
+        'approved_date': fields.datetime('Approved Date', type='datetime', readonly=True),
+        # Nuts Data Manager and NUTS Approved Date - if set it means that it was checked at that day!
+        # TODO: Must be a Button and fields read only to avoid manipulation!
+        'nuts_manager': fields.many2one('res.users', 'Nuts Data Manager'),
+        'nuts_approved_user': fields.many2one('res.users', 'Nuts Approved by', readonly=True),
+        'nuts_approved_date': fields.datetime('Nuts Approved Date', type='datetime', readonly=True),
+        #
+        # Labels und Kunden
+        'openat_kunden_ids': fields.many2many('res.partner',
+                                              'produktpass_partner_rel', 'produktpass_id', 'partner_id',
+                                              string='Kunden'),
         #
         'openat_csp_nummer': fields.char('CSP Article ID', size=64, required=True, translate=False, readonly=True,
                                          states={'ppnew': [('required', False), ('readonly', False)]}),
@@ -391,15 +422,84 @@ class product_product(osv.Model):
 
     def load(self, cr, uid, fields, data, context=None):
         print "--------------------------------------------------------"
-        print "load(): Commands BEFORE original method is called"
+        print "load(): Commands BEFORE original load method is called"
         print "--------------------------------------------------------"
+        print "load() uid: %s" % uid
         print "load() fields: %s" % fields
         print "load() data: %s" % data
+        print "load() context: %s" % context
+
         # TODO use export_data() to make a full backup of all products and post it as a message to a admin newsgroup
-        #
-        # TODO Muss noch eine Funktion schreiben die beim Importieren Zeilen ohne gueltige external id = CSP Nummer
-        # TODO verweigert. Ausserdem sollten alle Importierten Produkte im Zustand "To Check sein"
-        # self.check_valid_import(cr, uid, fields, data, context=context)
+
+        # Add the ID field if not already present
+        try:
+            id_index = fields.index('id')
+        except:
+            # Add id to the end of fields list
+            fields.append('id')
+            # Add an empty string to the end of the tuples inside the data list
+            data = [record + (u'',) for record in data]
+            # prepare the index variable - this should also be available outside the try statement ?!?
+            id_index = fields.index('id')
+            print "load() fields after id field added: %s" % fields
+            print "load() data after id field added: %s" % data
+
+        # Make sure if there is a CSP-Nummer it is correctly used for the id field (external id)
+        try:
+            openat_csp_nummer_index = fields.index('openat_csp_nummer')
+        except:
+            print "load() no CSP Number found - But that's probably ok!"
+        else:
+            # Transfer the csp-nummer to the id field - don't change any other id field
+            for x in range(0, len(data)):
+                record = list(data[x])
+                if record[openat_csp_nummer_index]:
+                    record[id_index] = u'__export__.' + record[openat_csp_nummer_index]
+                    data[x] = tuple(record)
+                    print "load() data after csp number transfered: %s" % str(data)
+                    print "load() record: %s" % record
+
+        # Check if the state fields exists and if not add it and set the right state
+        try:
+            state_index = fields.index('state')
+        except:
+            print "load() no State field found - But that's probably ok!"
+            # Add state field to the end of fields list
+            fields.append('state')
+            # Add an empty string to the end of the tuples inside the data list
+            data = [record + (u'',) for record in data]
+            # prepare the index variable.
+            state_index = fields.index('state')
+            print "load() fields after state field added: %s" % fields
+            print "load() data after state field added: %s" % data
+        # Add the correct state
+        for x in range(0, len(data)):
+            record = list(data[x])
+            # Todo: Get all available Translation terms for product.template.state:ppapproved
+            #source = self.pool.get('ir.translation')._get_source
+            #print "load() self.pool.get('ir.translation')._get_source: %s" % source
+            # End Todo
+            if record[state_index] != u'ppapproved':
+                try:
+                    # If no CSP Number Field is present at all openat_csp_nummer_index will be undefined
+                    # therefore we have to use try
+                    if record[openat_csp_nummer_index]:
+                        record[state_index] = u'pptocheck'
+                except:
+                    record[state_index] = u'ppnew'
+            data[x] = tuple(record)
+
+        print "load() data after state corrected: %s" % str(data)
+
+        # Add the Import User name
+        # ToDo find a way for the "First Import" user
+        user = self.pool.get('res.users').browse(cr, uid, uid)
+        print "load() user.name: %s " % user.name
+        fields.append('user_update')
+        data = [record + (unicode(user.name),) for record in data]
+
+        # ToDo Check if a workflow is used instead of manually doing it - if the worklfow is also respected on import
+
         return super(product_product, self).load(cr, uid, fields, data, context=context)
 
 

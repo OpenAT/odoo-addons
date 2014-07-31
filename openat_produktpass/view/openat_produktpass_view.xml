@@ -2,6 +2,19 @@
 <!-- More Info: https://doc.odoo.com/trunk/server/form-view-guidelines/ -->
 <openerp>
     <data>
+        <!-- Erweiterung des res.partner form views um das Feld openat_produktpass_ids -->
+        <record model="ir.ui.view" id="res_partner_openat_produktpass">
+            <field name="name">res.partner.openat_produktpass</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//field[@name='category_id']" position="after">
+                        <field name="openat_produktpass_ids" widget="many2many_tags" placeholder="Related Product Passes"/>
+                    </xpath>
+                </data>
+            </field>
+        </record>
         <!-- Erweiterung des product.product form views um den Reiter Produktpass -->
         <record model="ir.ui.view" id="product_product_openat_produktpass">
             <field name="name">product.product.openat_produktpass</field>
@@ -50,7 +63,12 @@
                                 <field name="name" placeholder="Internal Name"/>
                                 <field name="openat_csp_nummer" placeholder="CSP Article ID"/>
                             </h1>
-                            <div style="margin: 4px 0;"><field name="categ_id"/></div>
+                            <div style="margin: 4px 0;">
+                                <field name="categ_id"/>
+                            </div>
+                            <div style="margin: 4px 0;">
+                                <field name="openat_kunden_ids" domain="[('is_company', '=', True)]" placeholder="Custommers belonging to this Product Pass" widget="many2many_tags"/>
+                            </div>
                         </div>
                         <hr class="oe_clear" style="color: white; height: 12px; border: none;"/>
                         <group>
@@ -68,21 +86,6 @@
                                 <field name="openat_kennzeichnung_id"/>
                             </group>
                         </group>
-                        <div style="color: grey; font-size: 10px;" id="pp_access">
-                            <group>
-                                <group>
-                                    <field name="create_uid"/>
-                                    <field name="create_date"/>
-                                    <field name="write_uid"/>
-                                    <field name="write_date"/>
-                                </group>
-                                <group>
-                                    <field name="date_init"/>
-                                    <field name="date_update"/>
-                                    <field name="product_manager"/>
-                                </group>
-                            </group>
-                        </div>
                         <notebook>
                             <page string="Basics">
                                 <group>
@@ -181,7 +184,7 @@
                                 </group>
                                 <div style="margin-bottom: 3em; color: grey;">
                                     <span style="font-weight: bold">*BIG 7 (verpflichtend nach LMIV)</span><br />
-                                    Referenzmenge für einen durchschnittlichen Erwachsenen (8400 kJ/2000 kcal). Salz (NaCl) berechnet aus Natrium.
+                                    Referenzmenge fuer einen durchschnittlichen Erwachsenen (8400 kJ/2000 kcal). Salz (NaCl) berechnet aus Natrium.
                                 </div>
                                 <group>
                                     <field name="openat_be"/>
@@ -189,7 +192,7 @@
                             </page>
                             <page string="Other Ingredients / Chem.">
                                 <div style="margin: 2em 0 1.5em 0; color: grey; font-size: 10px">
-                                    Details über: Zusammensetzung von Gewürzen und Aromen. Den pflanzlichen Ursprung von Ölen, Fetten usw. Art der Kräuter wenn anwendbar. Verwendete Mikroorganismen bei Joghurt bzw. eingesetzte Kulturen ect..
+                                    Details ueber: Zusammensetzung von Gewuerzen und Aromen. Den pflanzlichen Ursprung von oelen, Fetten usw. Art der Kraeuter wenn anwendbar. Verwendete Mikroorganismen bei Joghurt bzw. eingesetzte Kulturen ect..
                                 </div>
                                 <label for="openat_rohstoffe" class="oe_edit_only"/>
                                 <field name="openat_rohstoffe" placeholder="Other Ingredients / Details"/>
@@ -245,7 +248,7 @@
                                 <group string="Mikrobiologischen Grenzwerte in KBE / g">
                                     <group>
                                         <div style="color: grey;">Bei Ende MHD - Richtwert</div>
-                                        <div style="padding-left: 1em; color: grey;">bei Ende MHD - Höchstwert</div>
+                                        <div style="padding-left: 1em; color: grey;">bei Ende MHD - Hoechstwert</div>
                                         <group>
                                             <field name="openat_mikrob_norm_keim"/>
                                             <field name="openat_mikrob_norm_clost"/>
@@ -277,10 +280,34 @@
                                     </group>
                                 </group>
                                 <div style="margin-bottom: 3em; color: grey; font-size: 10px;">
-                                    Muss mindestens den Grenzen der Verordnung EG Nr. 2073/2005 der Kommission über
-                                    mikrobiologische Kriterien für Lebensmittel und der DGHM entprechend.
+                                    Muss mindestens den Grenzen der Verordnung EG Nr. 2073/2005 der Kommission ueber
+                                    mikrobiologische Kriterien fuer Lebensmittel und der DGHM entprechend.
                                     Siehe: <a href="http://www.dghm.org/m_275">http://www.dghm.org/m_275</a>
                                 </div>
+                            </page>
+                            <page string="Access">
+                                <group>
+                                    <group>
+                                        <field name="product_manager"/>
+                                        <field name="nuts_manager"/>
+                                        <field name="csp_data_date"/>
+                                        <field name="nuts_data_date"/>
+                                        <field name="user_init" string="- - -"/>
+                                        <field name="date_init"/>
+                                        <field name="user_update"/>
+                                        <field name="date_update"/>
+                                    </group>
+                                    <group>
+                                        <field name="create_uid" color="red"/>
+                                        <field name="create_date"/>
+                                        <field name="write_uid"/>
+                                        <field name="write_date"/>
+                                        <field name="approved_user"/>
+                                        <field name="approved_date"/>
+                                        <field name="nuts_approved_user"/>
+                                        <field name="nuts_approved_date"/>
+                                    </group>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>

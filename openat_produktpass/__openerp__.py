@@ -37,7 +37,7 @@ werden. Dies kann ebenfalls automatisch auf der Basis eines CSV-Exports von NUTS
     'website': "http://www.OpenAT.at",
 	'css' : ['static/src/css/style.css'],
     'images': [],
-    'depends': ['base', 'product', 'product_expiry', 'stock', 'purchase', ],
+    'depends': ['base', 'product', 'product_expiry', 'stock', 'purchase', 'document'],
     'data': ['view/openat_produktpass_view.xml',
              'view/openat_produktpass_markenname_view.xml',
              'view/openat_produktpass_lagerundtransport_view.xml',
