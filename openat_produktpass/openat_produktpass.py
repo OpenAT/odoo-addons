@@ -21,6 +21,8 @@
 import datetime
 
 from osv import osv, fields
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from openerp import tools
 from openerp.tools.translate import _
 
@@ -124,9 +126,13 @@ class product_product(osv.Model):
         'write_uid': fields.many2one('res.users', 'Changed by', readonly=True),
         'write_date': fields.datetime('Change Date', readonly=True),
         # Import Fields
-        'date_init': fields.function(_get_irmodeldata, string='First Import Date', type='datetime', readonly=True),
+        'date_init': fields.function(_get_irmodeldata,
+                                     store={'product.product': (_get_irmodeldata, ['date_init'], 10)},
+                                     string='First Import Date', type='datetime', readonly=True),
         'user_init': fields.many2one('res.users', 'First Import by', readonly=True),
-        'date_update': fields.function(_get_irmodeldata, string='Last Import Date', type='datetime', readonly=True),
+        'date_update': fields.function(_get_irmodeldata,
+                                       store={'product.product': (_get_irmodeldata, ['date_update'], 10)},
+                                       string='Last Import Date', type='datetime', readonly=True),
         # set at import because of the load class overwritten for openat_produktpass
         'user_update': fields.many2one('res.users', 'Last Import by', readonly=True),
         # Should be set in the import CSV File:
@@ -398,10 +404,20 @@ class product_product(osv.Model):
         self.check_valid_call(cr, uid, ids, context=context)
         return self.write(cr, uid, ids, {'state': 'pptocheck'}, context=context)
 
-
     def button_approved(self, cr, uid, ids, context=None):
         self.check_valid_call(cr, uid, ids, context=context)
-        return self.write(cr, uid, ids, {'state': 'ppapproved'}, context=context)
+        return self.write(cr, uid, ids,
+                          {'state': 'ppapproved',
+                           'approved_user': uid,
+                           'approved_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')},
+                          context=context)
+
+    def button_nuts_approved(self, cr, uid, ids, context=None):
+        self.check_valid_call(cr, uid, ids, context=context)
+        return self.write(cr, uid, ids,
+                          {'nuts_approved_user': uid,
+                           'nuts_approved_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')},
+                          context=context)
 
 
     # Extend create, write and import_external (=load) functions

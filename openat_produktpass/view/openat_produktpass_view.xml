@@ -54,6 +54,8 @@
                     <header>
                         <button name="button_tocheck"  states="ppnew,ppapproved" string="To Check" type="object"/>
                         <button name="button_approved" states="pptocheck" string="Approve" type="object"/>
+                        <button name="button_nuts_approved" string="Approve NUTS Data" type="object"
+                                attrs="{'invisible': [('product_manager','=','user.id')]}"/>
                         <field name="state" widget="statusbar" statusbar_visible="ppnew,pptocheck,ppapproved"/>
                     </header>
                     <sheet>
@@ -322,12 +324,33 @@
             <field name="name">openat_produktpass_tree</field>
             <field name="model">product.product</field>
             <field name="arch" type="xml">
-                <tree string="Product Pass" version="7.0">
+                <tree string="Product Pass" version="7.0" colors="grey:state not in ('pptocheck', 'ppapproved');red:state=='pptocheck';green:state=='ppapproved'">
                     <field name="openat_csp_nummer"/>
                     <field name="name"/>
                     <field name="openat_bezeichnung"/>
                     <field name="openat_verkehrsbezeichnung"/>
                     <field name="state"/>
+
+                    <!-- field name="openat_kunden_ids" invisible="True"/ -->
+                    <!-- field name="openat_markenname_ids" invisible="True"/ -->
+
+                    <field name="product_manager" invisible="True"/>
+                    <field name="nuts_manager" invisible="True"/>
+                    <field name="approved_user" invisible="True"/>
+                    <field name="approved_date" invisible="True"/>
+
+                    <field name="nuts_approved_user" invisible="True"/>
+                    <field name="nuts_approved_date" invisible="True"/>
+
+                    <field name="openat_produktionsstaette" invisible="True"/>
+                    <field name="create_uid" invisible="True"/>
+                    <field name="create_date" invisible="True"/>
+                    <field name="write_uid" invisible="True"/>
+                    <field name="write_date" invisible="True"/>
+                    <field name="date_init" invisible="True"/>
+                    <field name="user_init" invisible="True"/>
+                    <field name="date_update" invisible="True"/>
+
                 </tree>
             </field>
         </record>
@@ -336,9 +359,64 @@
             <field name="model">product.product</field>
             <field name="arch" type="xml">
                 <search string="Product Pass" version="7.0">
+                    <group string="Group by">
+                        <filter string="Group by State" domain="[]" context="{'group_by':'state'}"/>
+                        <!-- filter string="Group by Company" domain="[]" context="{'group_by':'openat_kunden_ids'}"/ -->
+                        <!-- filter string="Group by Brand Name" domain="[]" context="{'group_by':'openat_markenname_ids'}"/ -->
+                        <filter string="Product Manager" domain="[]" context="{'group_by':'product_manager'}"/>
+                        <filter string="NUTS Manager" domain="[]" context="{'group_by':'nuts_manager'}"/>
+                        <separator />
+                        <filter string="User Approved" domain="[]" context="{'group_by':'approved_user'}"/>
+                        <filter string="Approved Date" domain="[]" context="{'group_by':'approved_date'}"/>
+                        <filter string="User Approved NUTS" domain="[]" context="{'group_by':'nuts_approved_user'}"/>
+                        <filter string="Production Facility" domain="[]" context="{'group_by':'openat_produktionsstaette'}"/>
+                        <separator />
+                        <filter string="Creator" domain="[]" context="{'group_by':'create_uid'}"/>
+                        <filter string="Creation Date" domain="[]" context="{'group_by':'create_date'}"/>
+                        <filter string="Changed by Last User" domain="[]" context="{'group_by':'write_uid'}"/>
+                        <filter string="Change Date" domain="[]" context="{'group_by':'write_date'}"/>
+                        <separator />
+                        <filter string="First Import Date" domain="[]" context="{'group_by':'date_init'}"/>
+                        <filter string="Last Import by User" domain="[]" context="{'group_by':'user_init'}"/>
+                        <filter string="Last Import Date" domain="[]" context="{'group_by':'date_update'}"/>
+                    </group>
+                    <group string="Filter By">
+                        <filter string="Created Last Week" name="_date_test_mike"
+                                domain="[('create_date','&lt;=',time.strftime('%%d/%%m/%%Y')),
+                                        ('create_date','&gt;=',
+                                        ((context_today() -
+                                        relativedelta(weeks=1)).strftime('%%d/%%m/%%Y')))
+                                        ]"/>
+                        <filter string="Changed Last Week" name="_date_test_mike"
+                                domain="[('write_date','&lt;=',time.strftime('%%d/%%m/%%Y')),
+                                        ('write_date','&gt;=',
+                                        ((context_today() -
+                                        relativedelta(weeks=1)).strftime('%%d/%%m/%%Y')))
+                                        ]"/>
+                        <filter string="Approved Last Week" name="_date_test_mike"
+                                domain="[('approved_date','&lt;=',time.strftime('%%d/%%m/%%Y')),
+                                        ('approved_date','&gt;=',
+                                        ((context_today() -
+                                        relativedelta(weeks=1)).strftime('%%d/%%m/%%Y')))
+                                        ]"/>
+                        <filter string="Imported Last Week" name="_date_test_mike"
+                                domain="[('date_update','&lt;=',time.strftime('%%d/%%m/%%Y')),
+                                        ('date_update','&gt;=',
+                                        ((context_today() -
+                                        relativedelta(weeks=1)).strftime('%%d/%%m/%%Y')))
+                                        ]"/>
+                        <separator />
+                        <filter string="New" domain="[('state','=','ppnew')]" context="{}"/>
+                        <filter string="To Check" domain="[('state','=','pptocheck')]" context="{}"/>
+                        <filter string="Approved" domain="[('state','=','ppapproved')]" context="{}"/>
+                        <separator />
+                    </group>
                     <field name="openat_csp_nummer"/>
                     <field name="name"/>
+                    <field name="state"/>
+                    <field name="openat_kunden_ids"/>
                     <field name="openat_bezeichnung"/>
+                    <field name="openat_markenname_ids"/>
                     <field name="openat_verkehrsbezeichnung"/>
                     <field name="openat_ean_verkauf"/>
                     <field name="openat_ean_bestell"/>
