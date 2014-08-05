@@ -68,9 +68,6 @@
                             <div style="margin: 4px 0;">
                                 <field name="categ_id"/>
                             </div>
-                            <div style="margin: 4px 0;">
-                                <field name="openat_kunden_ids" domain="[('is_company', '=', True)]" placeholder="Custommers belonging to this Product Pass" widget="many2many_tags"/>
-                            </div>
                         </div>
                         <hr class="oe_clear" style="color: white; height: 12px; border: none;"/>
                         <group>
@@ -95,13 +92,36 @@
                                         <field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)"/>
                                         <field name="uom_po_id" groups="product.group_uom"/>
                                         <field name="uos_id" groups="product.group_uos"/>
-                                        <field name="uos_coeff" groups="product.group_uos"/>
-                                        <field name="mes_type" groups="product.group_uos"/>
+                                        <field name="uos_coeff" groups="product.group_uos" invisible="1"/>
+                                        <field name="mes_type" groups="product.group_uos" invisible="1"/>
                                     </group>
                                     <group string="Weight">
                                         <field name="weight_net" string="Net Fill Weight (g)"/>
                                         <field name="openat_tara"/>
                                         <field name="weight"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Storage, Transport, Preservation">
+                                        <field name="openat_lagerundtransport_id"/>
+                                        <field name="openat_temperatur" invisible="1"/>
+                                        <field name="openat_luftfeuchte" invisible="1"/>
+                                        <field name="openat_licht" invisible="1"/>
+                                        <field name="openat_lageranweisung" invisible="1"/>
+                                        <field name="openat_lieferanweisung" invisible="1"/>
+                                        <field name="openat_lt_beschreibung" invisible="1"/>
+                                        <field name="openat_konservierungsmethode_id"/>
+                                        <field name="openat_temp" invisible="1"/>
+                                        <field name="openat_zeit" invisible="1"/>
+                                        <field name="openat_schutzbegasung" invisible="1"/>
+                                        <field name="openat_gaszusammensetzung" invisible="1"/>
+                                        <field name="openat_km_beschreibung" invisible="1"/>
+                                    </group>
+                                    <group string="Expiry">
+                                        <field name="life_time" string="Expiry (days)"/>
+                                        <field name="use_time" string="Remaining Life (days)"/>
+                                        <field name="removal_time" invisible="1"/>
+                                        <field name="alert_time" invisible="1"/>
                                     </group>
                                 </group>
                                 <label for="packaging" class="oe_horizontal_separator oe_clear"/>
@@ -127,42 +147,51 @@
                                         <field name="name"/>
                                     </form>
                                 </field>
-                                <group>
-                                    <group string="Expiry">
-                                        <field name="life_time" string="Expiry (days)"/>
-                                        <field name="use_time" string="Remaining Life (days)"/>
-                                        <field name="removal_time"/>
-                                        <field name="alert_time"/>
-                                    </group>
-                                    <group string="Miscellaneous">
-                                        <field name="openat_zubereitungshinweise"/>
-                                        <field name="openat_ifs"/>
-                                        <field name="openat_genusstauglichkeitskennzeichen"/>
-                                        <field name="openat_display"/>
-                                    </group>
-                                </group>
-                                <label for="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
-                                <field name="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
-                                <group string="Storage and Transport Instructions">
-                                    <field name="openat_lagerundtransport_id"/>
-                                    <field name="openat_temperatur"/>
-                                    <field name="openat_luftfeuchte"/>
-                                    <field name="openat_licht"/>
-                                    <field name="openat_lageranweisung"/>
-                                    <field name="openat_lieferanweisung"/>
-                                    <field name="openat_lt_beschreibung"/>
-                                </group>
-                                <group string="Preservation Method">
-                                    <field name="openat_konservierungsmethode_id"/>
-                                    <field name="openat_temp"/>
-                                    <field name="openat_zeit"/>
-                                    <field name="openat_schutzbegasung"/>
-                                    <field name="openat_gaszusammensetzung"/>
-                                    <field name="openat_km_beschreibung"/>
-                                </group>
-
                             </page>
-                            <page string="Ingredients / Nutritional Value">
+                            <page string="Partner">
+                                <field name="openat_partnerlines_ids">
+                                    <tree string="Partner Article Name" version="7.0" editable="top">
+                                        <field name="openat_partner_id"/>
+                                        <field name="name"/>
+                                    </tree>
+                                </field>
+                                <!-- field name="openat_partnerlines_partner_ids"/ -->
+                            </page>
+                            <page string="Misc">
+                                <group string="Miscellaneous">
+                                    <field name="openat_zubereitungshinweise"/>
+                                    <field name="openat_ifs"/>
+                                    <field name="openat_genusstauglichkeitskennzeichen"/>
+                                    <field name="openat_display"/>
+                                </group>
+                                <label for="openat_display_idsy" attrs="{'invisible': [('openat_display','=', False)]}"/>
+                                <field name="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
+                            </page>
+                            <page string="Access">
+                                <group>
+                                    <group>
+                                        <field name="product_manager"/>
+                                        <field name="nuts_manager"/>
+                                        <field name="csp_data_date"/>
+                                        <field name="nuts_data_date"/>
+                                        <field name="user_init" string="- - -"/>
+                                        <field name="date_init"/>
+                                        <field name="user_update"/>
+                                        <field name="date_update"/>
+                                    </group>
+                                    <group>
+                                        <field name="create_uid" color="red"/>
+                                        <field name="create_date"/>
+                                        <field name="write_uid"/>
+                                        <field name="write_date"/>
+                                        <field name="approved_user"/>
+                                        <field name="approved_date"/>
+                                        <field name="nuts_approved_user"/>
+                                        <field name="nuts_approved_date"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Ingr. / Nut.">
                                 <div style="margin: 2em 0 1.5em 0; color: grey; font-size: 10px">Zutatenliste laut LMIV inkl. QUID - Regelung</div>
                                 <label for="openat_zutatenliste" class="oe_edit_only"/>
                                 <field name="openat_zutatenliste" placeholder="Zutatenliste laut LMIV inkl. QUID - Regelung"/>
@@ -192,7 +221,7 @@
                                     <field name="openat_be"/>
                                 </group>
                             </page>
-                            <page string="Other Ingredients / Chem.">
+                            <page string="Other Ingr. / Chem.">
                                 <div style="margin: 2em 0 1.5em 0; color: grey; font-size: 10px">
                                     Details ueber: Zusammensetzung von Gewuerzen und Aromen. Den pflanzlichen Ursprung von oelen, Fetten usw. Art der Kraeuter wenn anwendbar. Verwendete Mikroorganismen bei Joghurt bzw. eingesetzte Kulturen ect..
                                 </div>
@@ -287,30 +316,6 @@
                                     Siehe: <a href="http://www.dghm.org/m_275">http://www.dghm.org/m_275</a>
                                 </div>
                             </page>
-                            <page string="Access">
-                                <group>
-                                    <group>
-                                        <field name="product_manager"/>
-                                        <field name="nuts_manager"/>
-                                        <field name="csp_data_date"/>
-                                        <field name="nuts_data_date"/>
-                                        <field name="user_init" string="- - -"/>
-                                        <field name="date_init"/>
-                                        <field name="user_update"/>
-                                        <field name="date_update"/>
-                                    </group>
-                                    <group>
-                                        <field name="create_uid" color="red"/>
-                                        <field name="create_date"/>
-                                        <field name="write_uid"/>
-                                        <field name="write_date"/>
-                                        <field name="approved_user"/>
-                                        <field name="approved_date"/>
-                                        <field name="nuts_approved_user"/>
-                                        <field name="nuts_approved_date"/>
-                                    </group>
-                                </group>
-                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
@@ -331,9 +336,9 @@
                     <field name="openat_verkehrsbezeichnung"/>
                     <field name="state"/>
 
-                    <!-- field name="openat_kunden_ids" invisible="True"/ -->
                     <!-- field name="openat_markenname_ids" invisible="True"/ -->
 
+                    <field name="openat_partnerlines_ids" invisible="True"/>
                     <field name="product_manager" invisible="True"/>
                     <field name="nuts_manager" invisible="True"/>
                     <field name="approved_user" invisible="True"/>
@@ -361,7 +366,6 @@
                 <search string="Product Pass" version="7.0">
                     <group string="Group by">
                         <filter string="Group by State" domain="[]" context="{'group_by':'state'}"/>
-                        <!-- filter string="Group by Company" domain="[]" context="{'group_by':'openat_kunden_ids'}"/ -->
                         <!-- filter string="Group by Brand Name" domain="[]" context="{'group_by':'openat_markenname_ids'}"/ -->
                         <filter string="Product Manager" domain="[]" context="{'group_by':'product_manager'}"/>
                         <filter string="NUTS Manager" domain="[]" context="{'group_by':'nuts_manager'}"/>
@@ -381,29 +385,46 @@
                         <filter string="Last Import Date" domain="[]" context="{'group_by':'date_update'}"/>
                     </group>
                     <group string="Filter By">
-                        <filter string="Created Last Week" name="_date_test_mike"
-                                domain="[('create_date','&lt;=',time.strftime('%%d/%%m/%%Y')),
-                                        ('create_date','&gt;=',
-                                        ((context_today() -
-                                        relativedelta(weeks=1)).strftime('%%d/%%m/%%Y')))
+                        <filter string="Created Last 7 Days" name="create_last7"
+                                domain="[
+                                         ( 'create_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'create_date','&gt;=',( (context_today()-datetime.timedelta(days=7)).strftime('%%d/%%m/%%Y') ) )
                                         ]"/>
-                        <filter string="Changed Last Week" name="_date_test_mike"
-                                domain="[('write_date','&lt;=',time.strftime('%%d/%%m/%%Y')),
-                                        ('write_date','&gt;=',
-                                        ((context_today() -
-                                        relativedelta(weeks=1)).strftime('%%d/%%m/%%Y')))
+                        <filter string="Changed Last 7 Days" name="write_last7"
+                                domain="[
+                                         ( 'write_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'write_date','&gt;=',( (context_today()-datetime.timedelta(days=7)).strftime('%%d/%%m/%%Y') ) )
                                         ]"/>
-                        <filter string="Approved Last Week" name="_date_test_mike"
-                                domain="[('approved_date','&lt;=',time.strftime('%%d/%%m/%%Y')),
-                                        ('approved_date','&gt;=',
-                                        ((context_today() -
-                                        relativedelta(weeks=1)).strftime('%%d/%%m/%%Y')))
+                        <filter string="Approved Last 7 Days" name="ppapproved_last7"
+                                domain="[
+                                         ( 'approved_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'approved_date','&gt;=',( (context_today()-datetime.timedelta(days=7)).strftime('%%d/%%m/%%Y') ) )
                                         ]"/>
-                        <filter string="Imported Last Week" name="_date_test_mike"
-                                domain="[('date_update','&lt;=',time.strftime('%%d/%%m/%%Y')),
-                                        ('date_update','&gt;=',
-                                        ((context_today() -
-                                        relativedelta(weeks=1)).strftime('%%d/%%m/%%Y')))
+                        <filter string="Imported Last 7 Days" name="imported_last7"
+                                domain="[
+                                         ( 'date_update','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'date_update','&gt;=',( (context_today()-datetime.timedelta(days=7)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <separator />
+                        <filter string="Created Last 30 Days" name="create_last7"
+                                domain="[
+                                         ( 'create_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'create_date','&gt;=',( (context_today()-datetime.timedelta(days=30)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <filter string="Changed Last 30 Days" name="write_last7"
+                                domain="[
+                                         ( 'write_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'write_date','&gt;=',( (context_today()-datetime.timedelta(days=30)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <filter string="Approved Last 30 Days" name="ppapproved_last7"
+                                domain="[
+                                         ( 'approved_date','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'approved_date','&gt;=',( (context_today()-datetime.timedelta(days=30)).strftime('%%d/%%m/%%Y') ) )
+                                        ]"/>
+                        <filter string="Imported Last 30 Days" name="imported_last7"
+                                domain="[
+                                         ( 'date_update','&lt;=',time.strftime('%%d/%%m/%%Y') ),
+                                         ( 'date_update','&gt;=',( (context_today()-datetime.timedelta(days=30)).strftime('%%d/%%m/%%Y') ) )
                                         ]"/>
                         <separator />
                         <filter string="New" domain="[('state','=','ppnew')]" context="{}"/>
@@ -411,15 +432,19 @@
                         <filter string="Approved" domain="[('state','=','ppapproved')]" context="{}"/>
                         <separator />
                     </group>
-                    <field name="openat_csp_nummer"/>
-                    <field name="name"/>
-                    <field name="state"/>
-                    <field name="openat_kunden_ids"/>
-                    <field name="openat_bezeichnung"/>
-                    <field name="openat_markenname_ids"/>
-                    <field name="openat_verkehrsbezeichnung"/>
-                    <field name="openat_ean_verkauf"/>
-                    <field name="openat_ean_bestell"/>
+                    <field name="name" filter_domain="['|', '|', '|',  '|',
+                                           ('name','ilike',self),
+                                           ('openat_csp_nummer','ilike',self),
+                                           ('openat_bezeichnung','ilike',self),
+                                           ('openat_verkehrsbezeichnung','ilike',self),
+                                           ('openat_partnerlines_ids.name','ilike',self)
+                                          ]" />
+                    <field name="openat_partnerlines_partner_ids" widget="selection" context="{'name':self}"/>
+                    <!-- field name="openat_partnerlines_partner_ids" string="TEST B"/ -->
+                    <field name="openat_markenname_ids" widget="selection" context="{'name':self}"/>
+                    <field name="approved_user" widget="selection" context="{'approved_user':self}"/>
+                    <!-- field name="openat_ean_verkauf"/>
+                    <field name="openat_ean_bestell"/ -->
                 </search>
             </field>
         </record>

@@ -10,8 +10,8 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Affero General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
 #
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
@@ -34,6 +34,7 @@ class res_partner(osv.Model):
                                                    'produktpass_partner_rel', 'partner_id', 'produktpass_id',
                                                    string='Product Passes'),
     }
+
 
 res_partner()
 
@@ -77,29 +78,14 @@ product_template()
 class product_product(osv.Model):
     _name = 'product.product'
     _inherit = 'product.product'
-
     '''
-    def _get_irmodeldata(self, cr, uid, ids, field_name, arg, context=None):
-        # !!! make sure the field field_name exists (has the same name) in ir.model.data !!!
-        irmodeldata = self.pool.get('ir.model.data')
-        ret = {}
-        for id in ids:
-            ret[id] = irmodeldata.read(cr,
-                                       uid,
-                                       irmodeldata.search(cr,
-                                                          uid,
-                                                          [('model', '=', 'product.product'),
-                                                           ('res_id', '=', id)],
-                                                          context=context),
-                                       context=context)[0][field_name]
-        print 'Import Date: ret: %s' % ret
-        return ret
+    Function for Function Fields: Used to get the import date and user from ir.model.data for each product.product
+    where an external id record exists.
+    We can use one function for both fields because the calling field name is in field_name call of method
+    !!! Therefore make sure the field field_name exists (has the same name) in ir.model.data and product.product!!!
     '''
-
-    # Versuch der speed Optimierung :)
     def _get_irmodeldata(self, cr, uid, ids, field_name, arg, context=None):
         print '_get_irmodeldata -> ids: %s' % ids
-        # !!! make sure the field field_name exists (has the same name) in ir.model.data !!!
         irmodeldata = self.pool.get('ir.model.data')
         irmodeldata_records = irmodeldata.read(cr,
                                                uid,
@@ -109,15 +95,57 @@ class product_product(osv.Model):
                                                                    ('res_id', 'in', ids)],
                                                                   context=context),
                                                context=context)
-        # es ist nicht sicher das auch fuer jede der ids die suche ein ergebniss liefert aber im suchergebniss
-        # sind bereits beide wichtigen felder enthalten res_id und field_name (z.B.: date_init)
-        # [{'res_id': 43, 'date_init': '2014-07-24 22:03:07'}, {'res_id': 43, 'date_init': '2014-07-24 22:03:07'}]
-        # nun muss die liste mit den dicst noch in ein reines dict umgewandelt werden
+        '''
+        es ist nicht sicher das auch fuer jede der ids die suche ein ergebniss liefert aber im suchergebniss
+        sind bereits beide wichtigen felder enthalten res_id und field_name (z.B.: date_init)
+        [{'res_id': 43, 'date_init': '2014-07-24 22:03:07'}, {'res_id': 43, 'date_init': '2014-07-24 22:03:07'}]
+        nun muss die liste mit den dicst noch in ein reines dict umgewandelt werden
+        '''
         print '_get_irmodeldata -> irmodeldata_records: %s' % irmodeldata_records
         ret = {record['res_id']: record[field_name] for record in irmodeldata_records if record['res_id']}
         print 'Import Date: ret: %s' % ret
         return ret
 
+    # Return all partner_ids (res.user) from partnerlines in openat_partnerlines_ids for given records
+    def _get_partner_ids(self, cr, uid, ids, field_name, arg, context=None):
+        ret = {}
+        partnerlines = self.pool.get('openat_produktpass.partnerlines')
+        partnerlines_results = partnerlines.read(cr, uid,
+                                                 partnerlines.search(cr, uid,
+                                                                     [('openat_produktpass_id', 'in', ids)],
+                                                                     context=context),
+                                                 context=context)
+        #[{'id': 19, 'openat_partner_id': (8, u'Firma A'), 'openat_produktpass_id': (43, u'Dicke Braune'), 'name': u'Alt Name A'},
+        # {'id': 20, 'openat_partner_id': (9, u'Firma B'), 'openat_produktpass_id': (43, u'Dicke Braune'),
+        # ...]
+        print "_get_partner_ids() partnerlines_results: %s " % partnerlines_results
+        if partnerlines_results:
+            for id in ids:
+                user_ids = [item['openat_partner_id'][0] for item in partnerlines_results if item['openat_produktpass_id'][0] == id]
+                if user_ids:
+                    ret[id] = user_ids
+        return ret
+
+    def _search_partner_ids(self, cr, uid, obj, name, args, context=None):
+        print "_search_partner_ids() -------------------------------------------"
+        print "_search_partner_ids() obj, name, args: %s, %s, %s " % (obj, name, args)
+        print "_search_partner_ids() context: %s" % context
+        # Ich moechte dann jeden pp der in seinen partnerlines einen res.user mit der id 8 hat
+        # kann = oder ilike sein :(
+        # SChritt 1 openat_partnerlines_ids ersetzen durch openat_partner_id
+        # ich kenne die partner ids oder den ilike partner namen
+        res=[]
+        partnerlines = self.pool.get('openat_produktpass.partnerlines')
+        partnerlines_results = partnerlines.read(cr, uid,
+                                                 partnerlines.search(cr, uid,
+                                                                     [('openat_partner_id', args[0][1], args[0][2])],
+                                                                     context=context),
+                                                 context=context)
+        res = [partnerline['openat_produktpass_id'][0] for partnerline in partnerlines_results
+               if partnerline['openat_produktpass_id'][0]]
+        print "_search_partner_ids() res: %s " % res
+        print "_search_partner_ids() -------------------------------------------"
+        return [('id', 'in', res)]
 
     _columns = {
         # Access Fields
@@ -136,7 +164,7 @@ class product_product(osv.Model):
         # set at import because of the load class overwritten for openat_produktpass
         'user_update': fields.many2one('res.users', 'Last Import by', readonly=True),
         # Should be set in the import CSV File:
-        'csp_data_date': fields.datetime('CPS-Data from', type='datetime'),
+        'csp_data_date': fields.datetime('CSB-Data from', type='datetime'),
         'nuts_data_date': fields.datetime('Nuts-Data from', type='datetime'),
         # Approved by user at date - Auto set through Button Approved
         'approved_user': fields.many2one('res.users', 'Approved by', readonly=True),
@@ -147,10 +175,18 @@ class product_product(osv.Model):
         'nuts_approved_user': fields.many2one('res.users', 'Nuts Approved by', readonly=True),
         'nuts_approved_date': fields.datetime('Nuts Approved Date', type='datetime', readonly=True),
         #
-        # Labels und Kunden
-        'openat_kunden_ids': fields.many2many('res.partner',
-                                              'produktpass_partner_rel', 'produktpass_id', 'partner_id',
-                                              string='Kunden'),
+        #'openat_kunden_ids': fields.many2many('res.partner',
+        #                                      'produktpass_partner_rel', 'produktpass_id', 'partner_id',
+        #                                      string='Kunden'),
+        #
+        # Partner Lines
+        'openat_partnerlines_ids': fields.one2many('openat_produktpass.partnerlines', 'openat_produktpass_id',
+                                                  'Partner Article Name'),
+        'openat_partnerlines_partner_ids': fields.function(
+            _get_partner_ids,
+            fnct_search=_search_partner_ids,
+            obj="res.partner",
+            string='Partner', type='one2many', readonly=True),
         #
         'openat_csp_nummer': fields.char('CSP Article ID', size=64, required=True, translate=False, readonly=True,
                                          states={'ppnew': [('required', False), ('readonly', False)]}),
@@ -335,19 +371,22 @@ class product_product(osv.Model):
 
     def cspnummer_to_external_id(self, cr, uid, ids, context=None, forcecspnumber=0):
         context = context or {}
+        if type(ids) is not list:
+            print 'IDS BEFORE conversion to list type: %s' % ids
+            ids = [ids]
         print "--------------------------------------------------------"
         print "cspnummer_to_external_id(): START"
         print "--------------------------------------------------------"
         print 'UID: %s' % uid
         print 'IDS: %s' % ids
         print 'Context: %s' % context
-        print 'self.read name: %s ' % self.read(cr, uid, ids, ['openat_csp_nummer'], context=context)
         #print 'Alle Attribute von product.product: %s' % dir(self)
         #print '---'
 
         # Read the field openat_csp_nummer for the given ids
         # The Answer is a List with embedded dictionaries of the form [{'id': 5, 'openat_cps_nummer': '123456'}, {...}]
         productpasses = self.read(cr, uid, ids, ['openat_csp_nummer'], context=context)
+        print 'productpasses: %s' % productpasses
 
         # Only go on if product.product entries with a openat_csp_nummer where found
         if productpasses:
@@ -356,6 +395,7 @@ class product_product(osv.Model):
 
             # Browse through the found productpasses records: pprecord is a dict {'id': 5, 'openat_cps_nummer': '123456'}
             for pprecord in productpasses:
+                print 'pprecord: %s ' % pprecord
                 if pprecord['openat_csp_nummer']:
 
                     '''
@@ -419,6 +459,15 @@ class product_product(osv.Model):
                            'nuts_approved_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')},
                           context=context)
 
+    def copy(self, cr, uid, ids, default=None, context=None):
+        if default == None:
+            default = {}
+        default = default.copy()
+        default.update({'openat_csp_nummer': False})
+        default.update({'state': 'ppnew'})
+        print "copy(): default: %s" % default
+        print "copy(): context: %s" % context
+        return super(product_product, self).copy(cr, uid, ids, default, context=context)
 
     # Extend create, write and import_external (=load) functions
     # since these are NOT in the __init__ sections they will only be called on first save of a product.product
@@ -520,6 +569,42 @@ class product_product(osv.Model):
 
 
 product_product()
+
+
+class partnerlines(osv.Model):
+    _name = 'openat_produktpass.partnerlines'
+    _columns = {
+        'openat_produktpass_id': fields.many2one('product.product', 'Product Pass', required=True),
+        'openat_partner_id': fields.many2one('res.partner', 'Partner', required=True),
+        'name': fields.char('Partner Article Name', translate=True),
+    }
+
+    def _check_unique(self, cr, uid, ids):
+        print "_check_unique(self, cr, uid, ids): %s, %s, %s" % (cr, uid, ids)
+        # Find if there are already partnerlines with this produktpass id
+        for partnerline in self.browse(cr, uid, ids, context=None):
+            print "_check_unique() partnerline.id: %s " % partnerline.id
+            print "_check_unique() partnerline.openat_produktpass_id.id: %s " % partnerline.openat_produktpass_id.id
+            print "_check_unique() partnerline.name: %s " % partnerline.name
+            # If this combination of product.product and res.partner already exists its a missuse
+            nonunique_ids = self.search(cr, uid,
+                                        [('openat_produktpass_id', '=', partnerline.openat_produktpass_id.id,),
+                                         ('openat_partner_id', '=', partnerline.openat_partner_id.id),
+                                         ('id', '!=', partnerline.id),
+                                        ])
+            #(partnerline.openat_partner_id.id,'in','openat_partner_id')])
+            print "_check_unique() Search results nonunique_ids: %s " % nonunique_ids
+            if nonunique_ids:
+                return False
+        return True
+
+    _constraints = [(_check_unique,
+                     'Only one alternative Partner Article Name allowed! '
+                     'Please to do not use the same PP and Partner combination twice',
+                     ['openat_produktpass_id', 'openat_partner_id'])]
+
+
+partnerlines()
 
 
 class markenname(osv.Model):
