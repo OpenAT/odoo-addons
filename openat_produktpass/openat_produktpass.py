@@ -155,16 +155,18 @@ class product_product(osv.Model):
         'write_date': fields.datetime('Change Date', readonly=True),
         # Import Fields
         'date_init': fields.function(_get_irmodeldata,
-                                     store={'product.product': (_get_irmodeldata, ['date_init'], 10)},
+                                     store=True,
+                                     #store={'product.product': (_get_irmodeldata, ['date_init'], 10)},
                                      string='First Import Date', type='datetime', readonly=True),
         'user_init': fields.many2one('res.users', 'First Import by', readonly=True),
         'date_update': fields.function(_get_irmodeldata,
-                                       store={'product.product': (_get_irmodeldata, ['date_update'], 10)},
+                                       store=True,
+                                       #store={'product.product': (_get_irmodeldata, ['date_update'], 10)},
                                        string='Last Import Date', type='datetime', readonly=True),
         # set at import because of the load class overwritten for openat_produktpass
         'user_update': fields.many2one('res.users', 'Last Import by', readonly=True),
         # Should be set in the import CSV File:
-        'csp_data_date': fields.datetime('CSB-Data from', type='datetime'),
+        'csb_data_date': fields.datetime('CSB-Data from', type='datetime'),
         'nuts_data_date': fields.datetime('Nuts-Data from', type='datetime'),
         # Approved by user at date - Auto set through Button Approved
         'approved_user': fields.many2one('res.users', 'Approved by', readonly=True),
@@ -188,7 +190,7 @@ class product_product(osv.Model):
             obj="res.partner",
             string='Partner', type='one2many', readonly=True),
         #
-        'openat_csp_nummer': fields.char('CSP Article ID', size=64, required=True, translate=False, readonly=True,
+        'openat_csb_nummer': fields.char('CSB Article ID', size=64, required=True, translate=False, readonly=True,
                                          states={'ppnew': [('required', False), ('readonly', False)]}),
         'openat_bezeichnung': fields.char('Article Name', translate=True),
         # Markennamen sollen als Tags geloest werden
@@ -199,8 +201,13 @@ class product_product(osv.Model):
         # Produktfoto - Feld Bereits vorhanden
         'openat_ean_verkauf': fields.char('EAN-CODE Unit of Sale', translate=False),
         'openat_ean_bestell': fields.char('EAN-CODE Order Unit', translate=False),
-        # nicht mehr notwendig: ersetzt durch weight_net
-        #'openat_nettofuellgewicht': fields.integer('Net Fill Weight (g)'),
+
+        # LOGISTIKTDATEN - die meisten Felder bereits da - muss nur in neue Views gut uebertragen werden ;)
+        # Originale Felder beachten z.B.: weight_net! Es muss dennoch andere geben weil typ char fuer z.B.: > 5
+        'openat_nettofuellgewicht': fields.char('Net Fill Weight (g)'),
+        'openat_tara': fields.char('Tara (g)'),
+        'openat_bruttofuellgewicht': fields.char('Gross Fill Weight (g)'),
+
         'openat_referenzprodukte': fields.text('Reference Products', translate=True),
         #'openat_produktionsstaette': fields.text('Production Facility', translate=True),
         'openat_produktionsstaette': fields.many2one('res.partner', 'Production Facility'),
@@ -251,19 +258,18 @@ class product_product(osv.Model):
         #
         'openat_zutatenliste': fields.text('Ingredients', translate=True),
         # Naehrwerte big 7 pro 100g
-        'openat_brennwert_kj': fields.integer('Calorific Value (kJ)*'),
-        'openat_brennwert_kcal': fields.integer('Calorific Value (kcal)*'),
-        'openat_fett': fields.integer('Fat (g)*'),
-        'openat_gesaettigte_fettsauren': fields.integer('Saturated Fatty Acids (g)*'),
-        'openat_einfach_ungesaettigte_fettsauren': fields.integer('Monounsaturated Fatty Acids (g)'),
-        'openat_mehrfach_ungesaettigte_fettsauren': fields.integer('Polyunsaturated Fatty Acids (g)'),
-        'openat_kohlenhydrate': fields.integer('Carbohydrates (g)*'),
-        'openat_kohlenhydrate_zucker': fields.integer('Carbohydrates Sugar (g)*'),
-        'openat_ballaststoffe': fields.integer('Dietary Fibre (g)'),
-        'openat_eiweiss': fields.integer('Protein (g)*'),
-        'openat_natrium': fields.integer('Natrium (g)'),
-        'openat_salz': fields.integer('Salt (g)*'),
-        'openat_be': fields.char('BE', translate=True),
+        'openat_brennwert_kj': fields.char('Calorific Value (kJ)*'),
+        'openat_brennwert_kcal': fields.char('Calorific Value (kcal)*'),
+        'openat_fett': fields.char('Fat (g)*'),
+        'openat_gesaettigte_fettsauren': fields.char('Saturated Fatty Acids (g)*'),
+        'openat_einfach_ungesaettigte_fettsauren': fields.char('Monounsaturated Fatty Acids (g)'),
+        'openat_mehrfach_ungesaettigte_fettsauren': fields.char('Polyunsaturated Fatty Acids (g)'),
+        'openat_kohlenhydrate': fields.char('Carbohydrates (g)*'),
+        'openat_kohlenhydrate_zucker': fields.char('Carbohydrates Sugar (g)*'),
+        'openat_ballaststoffe': fields.char('Dietary Fibre (g)'),
+        'openat_eiweiss': fields.char('Protein (g)*'),
+        'openat_salz': fields.char('Salt (g)*'),
+        'openat_be': fields.char('BE'),
         # Allergene EU (bolean - writeable nur wenn angehakt - onchange)
         'openat_allergene_getreide': fields.boolean('Glutenhaltiges Getreide sowie daraus hergestellte Erzeugnisse'),
         'openat_allergene_getreide_text': fields.text('Glutenhaltiges Getreide sowie daraus hergestellte Erzeugnisse',
@@ -301,50 +307,24 @@ class product_product(osv.Model):
         'openat_auslobungen': fields.text('Additional Labelings', translate=True),
         'openat_rohstoffe': fields.text('Other Ingredients / Details', translate=True),
         # Chemische Analysewerte
-        'openat_chem_wasser': fields.integer('Water (% / 100g)'),
-        'openat_chem_wasser_kodex': fields.integer('Water (% / 100g): Minimum Value from Kodex'),
-        'openat_chem_fett': fields.integer('Fat (% / 100g)'),
-        'openat_chem_fett_kodex': fields.integer('Fat (% / 100g): Minimum Value from Kodex'),
-        'openat_chem_eiweiss': fields.integer('Protein (% / 100g)'),
-        'openat_chem_eiweiss_kodex': fields.integer('Protein (% / 100g): Minimum Value from Kodex'),
-        'openat_chem_kohlenhydrate': fields.integer('Carbohydrates (% / 100g)'),
-        'openat_chem_kohlenhydrate_kodex': fields.integer('Carbohydrates (% / 100g): Minimum Value from Kodex'),
+        'openat_chem_wasser': fields.char('Water (%/100g)'),
+        'openat_chem_wasser_kodex': fields.char('Water (%/100g) Minimum'),
+        'openat_chem_fett': fields.char('Fat (%/100g)'),
+        'openat_chem_fett_kodex': fields.char('Fat (%/100g) Minimum'),
+        'openat_chem_eiweiss': fields.char('Protein (%/100g)'),
+        'openat_chem_eiweiss_kodex': fields.char('Protein (%/100g) Minimum'),
+        'openat_chem_kohlenhydrate': fields.char('Carbohydrates (%/100g)'),
+        'openat_chem_kohlenhydrate_kodex': fields.char('Carbohydrates (%/100g) Minimum'),
         # Mikrobiologischen Grenzwerte in KBE / g
-        # bei Ende MHD Richtwert
-        'openat_mikrob_norm_keim': fields.integer('Aer. mes. Gesamtkeimzahl (KBE / g)'),
-        'openat_mikrob_norm_clost': fields.integer('mes. sulfitred. Clostridien (KBE / g)'),
-        'openat_mikrob_norm_coli': fields.integer('E. Coli (KBE / g)'),
-        'openat_mikrob_norm_entero': fields.integer('Enterokokken (KBE / g)'),
-        'openat_mikrob_norm_staphy': fields.integer('koag. pos. Staphylokokken (KBE / g)'),
-        'openat_mikrob_norm_lacto': fields.integer('Lactobacillen (KBE / g)'),
-        'openat_mikrob_norm_cerus': fields.integer('Bacillus cereus (KBE / g)'),
-        'openat_mikrob_norm_hefen': fields.integer('Hefen (KBE / g)'),
-        'openat_mikrob_norm_schimmel': fields.integer('Schimmel (KBE / g)'),
-        'openat_mikrob_norm_salmonellen': fields.integer('Salmonellen (KBE / g)'),
-        'openat_mikrob_norm_listeria': fields.integer('Listeria monocytogenes (KBE / g)'),
-        'openat_mikrob_norm_ehec': fields.integer('EHEC (KBE / g)'),
-        # bei Ende MHD Hoechstwert
-        'openat_mikrob_max_keim': fields.integer('Aer. mes. Gesamtkeimzahl (KBE / g)'),
-        'openat_mikrob_max_clost': fields.integer('mes. sulfitred. Clostridien (KBE / g)'),
-        'openat_mikrob_max_coli': fields.integer('E. Coli (KBE / g)'),
-        'openat_mikrob_max_entero': fields.integer('Enterokokken (KBE / g)'),
-        'openat_mikrob_max_staphy': fields.integer('koag. pos. Staphylokokken (KBE / g)'),
-        'openat_mikrob_max_lacto': fields.integer('Lactobacillen (KBE / g)'),
-        'openat_mikrob_max_cerus': fields.integer('Bacillus cereus (KBE / g)'),
-        'openat_mikrob_max_hefen': fields.integer('Hefen (KBE / g)'),
-        'openat_mikrob_max_schimmel': fields.integer('Schimmel (KBE / g)'),
-        'openat_mikrob_max_salmonellen': fields.integer('Salmonellen (KBE / g)'),
-        'openat_mikrob_max_listeria': fields.integer('Listeria monocytogenes (KBE / g)'),
-        'openat_mikrob_max_ehec': fields.integer('EHEC (KBE / g)'),
-        #
-        # LOGISTIKTDATEN - die meisten Felder bereits da - muss nur in neue Views gut uebertragen werden ;)
-        'openat_tara': fields.integer('Tara (g)'),
+        'openat_mikrob_id': fields.many2one('openat_produktpass.mikrob', 'Microbiological Limits KBE/g'),
         # Zubereitung
         'openat_zubereitungshinweise': fields.text('Cooking', translate=True),
-        # Zertifikatsbezeichnung
-        'openat_ifs': fields.text('IFS', translate=True),
         # Gensusstauglichkeitskennzeichen
-        'openat_genusstauglichkeitskennzeichen': fields.text('Genusstauglichkeitskennzeichen'),
+        'openat_genusstauglichkeitskennzeichen_id': fields.many2one('openat_produktpass.genusstauglichkeitskennzeichen',
+                                                                    'Genusstauglichkeitskennzeichen'),
+        'openat_zertifikate_ids': fields.many2many('openat_produktpass.zertifikate', 'rel_produktpass_zertifikate',
+                                                   'openat_produktpass_id', 'openat_zertifikat_id',
+                                                   'Certificates'),
         # DISPLAY
         'openat_display': fields.boolean('Display'),
         'openat_display_ids': fields.one2many('openat_produktpass.display', 'produktpass_id', 'Displaysortierung'),
@@ -352,30 +332,30 @@ class product_product(osv.Model):
     _defaults = {
         'state': 'ppnew',
     }
-    _sql_constraints = [('openat_csp_nummer_unique', 'unique(openat_csp_nummer)', 'CSP Article ID has to be unique!')]
+    _sql_constraints = [('openat_csb_nummer_unique', 'unique(openat_csb_nummer)', 'CSB Article ID has to be unique!')]
 
     def check_valid_call(self, cr, uid, ids, context=None):
-        productpass = self.read(cr, uid, ids, ['openat_csp_nummer'], context=context)
+        productpass = self.read(cr, uid, ids, ['openat_csb_nummer'], context=context)
         if not len(productpass) == 1:
             raise osv.except_osv(
                 'None or more than one record found!',
                 'Please make sure there is only one Produkt Pass (product.product record) selected'
             )
-        if not productpass[0]['openat_csp_nummer']:
+        if not productpass[0]['openat_csb_nummer']:
             raise osv.except_osv(
-                'No CSP Number!',
-                'Please assign a valid CSP Number to your Product Pass (product.product.openat_csp_nummer)'
+                'No CSB Number!',
+                'Please assign a valid CSB Number to your Product Pass (product.product.openat_csb_nummer)'
             )
         return True
 
 
-    def cspnummer_to_external_id(self, cr, uid, ids, context=None, forcecspnumber=0):
+    def csbnummer_to_external_id(self, cr, uid, ids, context=None, forcecsbnumber=0):
         context = context or {}
         if type(ids) is not list:
             print 'IDS BEFORE conversion to list type: %s' % ids
             ids = [ids]
         print "--------------------------------------------------------"
-        print "cspnummer_to_external_id(): START"
+        print "csbnummer_to_external_id(): START"
         print "--------------------------------------------------------"
         print 'UID: %s' % uid
         print 'IDS: %s' % ids
@@ -383,12 +363,12 @@ class product_product(osv.Model):
         #print 'Alle Attribute von product.product: %s' % dir(self)
         #print '---'
 
-        # Read the field openat_csp_nummer for the given ids
+        # Read the field openat_csb_nummer for the given ids
         # The Answer is a List with embedded dictionaries of the form [{'id': 5, 'openat_cps_nummer': '123456'}, {...}]
-        productpasses = self.read(cr, uid, ids, ['openat_csp_nummer'], context=context)
+        productpasses = self.read(cr, uid, ids, ['openat_csb_nummer'], context=context)
         print 'productpasses: %s' % productpasses
 
-        # Only go on if product.product entries with a openat_csp_nummer where found
+        # Only go on if product.product entries with a openat_csb_nummer where found
         if productpasses:
             # Get the object ir.model.data
             irmodeldata = self.pool.get('ir.model.data')
@@ -396,7 +376,7 @@ class product_product(osv.Model):
             # Browse through the found productpasses records: pprecord is a dict {'id': 5, 'openat_cps_nummer': '123456'}
             for pprecord in productpasses:
                 print 'pprecord: %s ' % pprecord
-                if pprecord['openat_csp_nummer']:
+                if pprecord['openat_csb_nummer']:
 
                     '''
                     # ToDo: Use correct Message template with all csv records to post message
@@ -419,23 +399,23 @@ class product_product(osv.Model):
                     assert len(
                         irmodeldata_record_id) <= 1, 'More than one record found for ir.model.data: only one allowed'
 
-                    # If a corresponding record already exists update the ir.model.data record with the csp number as name
+                    # If a corresponding record already exists update the ir.model.data record with the csb number as name
                     if irmodeldata_record_id:
                         irmodeldata.write(cr, uid, irmodeldata_record_id,
-                                          {'name': pprecord['openat_csp_nummer']},
+                                          {'name': pprecord['openat_csb_nummer']},
                                           context=context)
                     # If none exists create a new one
                     # ToDo: Check the function export_data and see how it creates the external_id record
                     else:
                         irmodeldata.create(cr, uid,
                                            {'module': '__export__',
-                                            'name': pprecord['openat_csp_nummer'],
+                                            'name': pprecord['openat_csb_nummer'],
                                             'model': 'product.product',
                                             'res_id': pprecord['id'], },
                                            context=None)
 
         print "--------------------------------------------------------"
-        print "cspnummer_to_external_id(): STOP"
+        print "csbnummer_to_external_id(): STOP"
         print "--------------------------------------------------------"
         return True
 
@@ -463,8 +443,10 @@ class product_product(osv.Model):
         if default == None:
             default = {}
         default = default.copy()
-        default.update({'openat_csp_nummer': False})
+        default.update({'openat_csb_nummer': False})
         default.update({'state': 'ppnew'})
+        default.update({'openat_display': False})
+        default.update({'openat_display_ids': False})
         print "copy(): default: %s" % default
         print "copy(): context: %s" % context
         return super(product_product, self).copy(cr, uid, ids, default, context=context)
@@ -478,7 +460,7 @@ class product_product(osv.Model):
 
     def write(self, cr, uid, ids, vals, context=None):
         print "write(): Commands BEFORE original method is called"
-        self.cspnummer_to_external_id(cr, uid, ids, context=context)
+        self.csbnummer_to_external_id(cr, uid, ids, context=context)
         return super(product_product, self).write(cr, uid, ids, vals, context=context)
 
     def export_data(self, cr, uid, ids, fields_to_export, context=None):
@@ -509,19 +491,19 @@ class product_product(osv.Model):
             print "load() fields after id field added: %s" % fields
             print "load() data after id field added: %s" % data
 
-        # Make sure if there is a CSP-Nummer it is correctly used for the id field (external id)
+        # Make sure if there is a CSB-Nummer it is correctly used for the id field (external id)
         try:
-            openat_csp_nummer_index = fields.index('openat_csp_nummer')
+            openat_csb_nummer_index = fields.index('openat_csb_nummer')
         except:
-            print "load() no CSP Number found - But that's probably ok!"
+            print "load() no CSB Number found - But that's probably ok!"
         else:
-            # Transfer the csp-nummer to the id field - don't change any other id field
+            # Transfer the csb-nummer to the id field - don't change any other id field
             for x in range(0, len(data)):
                 record = list(data[x])
-                if record[openat_csp_nummer_index]:
-                    record[id_index] = u'__export__.' + record[openat_csp_nummer_index]
+                if record[openat_csb_nummer_index]:
+                    record[id_index] = u'__export__.' + record[openat_csb_nummer_index]
                     data[x] = tuple(record)
-                    print "load() data after csp number transfered: %s" % str(data)
+                    print "load() data after csb number transfered: %s" % str(data)
                     print "load() record: %s" % record
 
         # Check if the state fields exists and if not add it and set the right state
@@ -546,9 +528,9 @@ class product_product(osv.Model):
             # End Todo
             if record[state_index] != u'ppapproved':
                 try:
-                    # If no CSP Number Field is present at all openat_csp_nummer_index will be undefined
+                    # If no CSB Number Field is present at all openat_csb_nummer_index will be undefined
                     # therefore we have to use try
-                    if record[openat_csp_nummer_index]:
+                    if record[openat_csb_nummer_index]:
                         record[state_index] = u'pptocheck'
                 except:
                     record[state_index] = u'ppnew'
@@ -611,7 +593,7 @@ class markenname(osv.Model):
     _name = 'openat_produktpass.markenname'
     _columns = {
         'name': fields.char('Brand Name', size=256, required=True, translate=False),
-        'produktpass_ids': fields.many2many('product.product', string="Produkt Ids")
+        'produktpass_ids': fields.many2many('product.product', string="Product Passes")
     }
 
 
@@ -621,16 +603,15 @@ markenname()
 class lagerundtransport(osv.Model):
     _name = 'openat_produktpass.lagerundtransport'
     _columns = {
-        'openat_produktpass_ids': fields.one2many('product.product', 'openat_lagerundtransport_id', 'Product Pass'),
+        'openat_produktpass_ids': fields.one2many('product.product', 'openat_lagerundtransport_id', 'Product Passes'),
         'name': fields.char('Name of Instruction', size=256, required=True, translate=False),
         'openat_temperatur': fields.integer('Temperature °C'),
         'openat_luftfeuchte': fields.integer('Humidity %'),
         'openat_licht': fields.text('Lighting Conditions'),
         'openat_lageranweisung': fields.text('Storage Instructions'),
         'openat_lieferanweisung': fields.text('Transport Instructions'),
-        'openat_beschreibung': fields.text('Storage and Transport Method Description'),
+        'openat_beschreibung': fields.text('Description'),
     }
-
 
 lagerundtransport()
 
@@ -638,15 +619,14 @@ lagerundtransport()
 class konservierungsmethode(osv.Model):
     _name = 'openat_produktpass.konservierungsmethode'
     _columns = {
-        'openat_produktpass_ids': fields.one2many('product.product', 'openat_konservierungsmethode_id', 'Product Pass'),
-        'name': fields.char('Preservation Method (Short Name)', size=256, required=True, translate=False),
-        'openat_temp': fields.integer('Preservation Method Temperature °C'),
-        'openat_zeit': fields.char('Preservation Method Time'),
-        'openat_schutzbegasung': fields.char('Preservation Method Protective Gas'),
-        'openat_gaszusammensetzung': fields.text('Preservation Method Gas Types'),
-        'openat_beschreibung': fields.text('Preservation Method Description'),
+        'openat_produktpass_ids': fields.one2many('product.product', 'openat_konservierungsmethode_id', 'Product Passes'),
+        'name': fields.char('Name of Preservation Method', size=256, required=True, translate=False),
+        'openat_temp': fields.integer('Temperature °C'),
+        'openat_zeit': fields.char('Time'),
+        'openat_schutzbegasung': fields.char('Protective Gas'),
+        'openat_gaszusammensetzung': fields.text('Gas Types'),
+        'openat_beschreibung': fields.text('Description'),
     }
-
 
 konservierungsmethode()
 
@@ -654,23 +634,88 @@ konservierungsmethode()
 class kennzeichnung(osv.Model):
     _name = 'openat_produktpass.kennzeichnung'
     _columns = {
-        'openat_produktpass_ids': fields.one2many('product.product', 'openat_kennzeichnung_id', 'Product Pass'),
-        'name': fields.char('Name of Instruction', size=256, required=True, translate=True),
-        'openat_beschreibung': fields.text('Temperature', required=True, translate=True)
+        'openat_produktpass_ids': fields.one2many('product.product', 'openat_kennzeichnung_id', 'Product Passes'),
+        'name': fields.char('Name of Austrian Labeling', size=256, required=True, translate=True),
+        'openat_beschreibung': fields.text('Description', required=True, translate=True)
     }
 
-
 kennzeichnung()
+
+
+class genusstauglichkeitskennzeichen(osv.Model):
+    _name = 'openat_produktpass.genusstauglichkeitskennzeichen'
+    _columns = {
+        'openat_produktpass_ids': fields.one2many('product.product', 'openat_genusstauglichkeitskennzeichen_id', 'Product Pass'),
+        'name': fields.char('Name', size=256, required=True, translate=False),
+        'openat_gtk_number': fields.char('Number', translate=False),
+        'openat_gtk_image': fields.binary('Image', filters='*.png,*.gif,*.jpg', translate=False)
+    }
+
+genusstauglichkeitskennzeichen()
+
+
+class zertifikate(osv.Model):
+    _name = 'openat_produktpass.zertifikate'
+    _columns = {
+        'name': fields.char('Name of Certificate', size=256, required=True, translate=True),
+        'niveau': fields.char('Niveau - Grad', translate=False),
+        'valid_until': fields.date('Valid Until'),
+        'openat_produktpass_ids': fields.many2many('product.product', 'rel_produktpass_zertifikate',
+                                                   'openat_zertifikat_id', 'openat_produktpass_id',
+                                                   'Product Passes'),
+    }
+
+zertifikate()
 
 
 class display(osv.Model):
     _name = 'openat_produktpass.display'
     _columns = {
-        'produktpass_id': fields.many2one('product.product', 'Product Pass', ondelete='cascade'),
-        'name': fields.char('Art. Nr.', size=256, required=True, translate=True),
+        'produktpass_id': fields.many2one('product.product', 'Product Pass'),
+        'name': fields.char('Art. Nr.', required=True, translate=True),
         'openat_bezeichnung': fields.text('Description', translate=True),
-        'openat_eancode': fields.text('EAN-Code', translate=True)
+        'openat_eancode': fields.char('EAN-Code', translate=False),
+        'openat_quantity': fields.char('Quantity', size=256, required=True, translate=True)
     }
 
+display()
+
+class mikrob(osv.Model):
+    _name = 'openat_produktpass.mikrob'
+    _columns = {
+        'openat_produktpass_ids': fields.one2many('product.product', 'openat_mikrob_id', 'Product Passes'),
+        'name': fields.char('Name', size=256, required=True, translate=True),
+        # bei Ende MHD Richtwert
+        'openat_mikrob_norm_keim': fields.char('Aer. mes. Gesamtkeimzahl (KBE / g)'),
+        'openat_mikrob_norm_enterob': fields.char('Enterobacteriaceen (KBE / g)'),
+        'openat_mikrob_norm_clost': fields.char('mes. sulfitred. Clostridien (KBE / g)'),
+        'openat_mikrob_norm_coliforme': fields.char('Coliforme (KBE / g)'),
+        'openat_mikrob_norm_coli': fields.char('E. Coli (KBE / g)'),
+        'openat_mikrob_norm_entero': fields.char('Enterokokken (KBE / g)'),
+        'openat_mikrob_norm_staphy': fields.char('koag. pos. Staphylokokken (KBE / g)'),
+        'openat_mikrob_norm_lacto': fields.char('Lactobacillen (KBE / g)'),
+        'openat_mikrob_norm_cerus': fields.char('Bacillus cereus (KBE / g)'),
+        'openat_mikrob_norm_hefen': fields.char('Hefen (KBE / g)'),
+        'openat_mikrob_norm_schimmel': fields.char('Schimmel (KBE / g)'),
+        'openat_mikrob_norm_salmonellen': fields.char('Salmonellen (KBE / g)'),
+        'openat_mikrob_norm_listeria': fields.char('Listeria monocytogenes (KBE / g)'),
+        'openat_mikrob_norm_ehec': fields.char('EHEC (KBE / g)'),
+        # bei Ende MHD Hoechstwert
+        'openat_mikrob_max_keim': fields.char('Aer. mes. Gesamtkeimzahl (KBE / g)'),
+        'openat_mikrob_max_enterob': fields.char('Enterobacteriaceen (KBE / g)'),
+        'openat_mikrob_max_clost': fields.char('mes. sulfitred. Clostridien (KBE / g)'),
+        'openat_mikrob_max_coliforme': fields.char('Coliforme (KBE / g)'),
+        'openat_mikrob_max_coli': fields.char('E. Coli (KBE / g)'),
+        'openat_mikrob_max_entero': fields.char('Enterokokken (KBE / g)'),
+        'openat_mikrob_max_staphy': fields.char('koag. pos. Staphylokokken (KBE / g)'),
+        'openat_mikrob_max_lacto': fields.char('Lactobacillen (KBE / g)'),
+        'openat_mikrob_max_cerus': fields.char('Bacillus cereus (KBE / g)'),
+        'openat_mikrob_max_hefen': fields.char('Hefen (KBE / g)'),
+        'openat_mikrob_max_schimmel': fields.char('Schimmel (KBE / g)'),
+        'openat_mikrob_max_salmonellen': fields.char('Salmonellen (KBE / g)'),
+        'openat_mikrob_max_listeria': fields.char('Listeria monocytogenes (KBE / g)'),
+        'openat_mikrob_max_ehec': fields.char('EHEC (KBE / g)'),
+        #
+    }
 
 display()

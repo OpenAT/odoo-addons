@@ -25,7 +25,7 @@
                     <xpath expr="//page[@string='Information']" position="before">
                         <page string="Product Sheet">
                             <group>
-                                <field name="openat_csp_nummer"/>
+                                <field name="openat_csb_nummer"/>
                                 <field name="openat_bezeichnung"/>
                                 <field name="openat_markenname_ids" widget="many2many_tags" placeholder="Markennamen..."/>
                                 <field name="openat_verkehrsbezeichnung"/>
@@ -63,7 +63,7 @@
                         <div class="oe_title">
                             <h1>
                                 <field name="name" placeholder="Internal Name"/>
-                                <field name="openat_csp_nummer" placeholder="CSP Article ID"/>
+                                <field name="openat_csb_nummer" placeholder="CSB Article ID"/>
                             </h1>
                             <div style="margin: 4px 0;">
                                 <field name="categ_id"/>
@@ -77,51 +77,63 @@
                                 <field name="openat_verkehrsbezeichnung"/>
                                 <field name="openat_referenzprodukte"/>
                                 <field name="openat_produktionsstaette" context="{'show_address': 1}"/>
+                                <field name="openat_display"/>
                             </group>
                             <group>
                                 <field name="openat_ean_verkauf"/>
                                 <field name="openat_ean_bestell"/>
-                                <field name="openat_auslobungen"/>
                                 <field name="openat_kennzeichnung_id"/>
+                                <field name="openat_auslobungen"/>
+                                <field name="openat_genusstauglichkeitskennzeichen_id"/>
+                                <field name="openat_zertifikate_ids" widget="many2many_tags"/>
                             </group>
                         </group>
+                        <label for="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
+                        <field name="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
                         <notebook>
                             <page string="Basics">
                                 <group>
-                                    <group string="Units">
-                                        <field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)"/>
-                                        <field name="uom_po_id" groups="product.group_uom"/>
-                                        <field name="uos_id" groups="product.group_uos"/>
-                                        <field name="uos_coeff" groups="product.group_uos" invisible="1"/>
-                                        <field name="mes_type" groups="product.group_uos" invisible="1"/>
-                                    </group>
                                     <group string="Weight">
-                                        <field name="weight_net" string="Net Fill Weight (g)"/>
+                                        <field name="openat_nettofuellgewicht"/>
                                         <field name="openat_tara"/>
-                                        <field name="weight"/>
-                                    </group>
-                                </group>
-                                <group>
-                                    <group string="Storage, Transport, Preservation">
-                                        <field name="openat_lagerundtransport_id"/>
-                                        <field name="openat_temperatur" invisible="1"/>
-                                        <field name="openat_luftfeuchte" invisible="1"/>
-                                        <field name="openat_licht" invisible="1"/>
-                                        <field name="openat_lageranweisung" invisible="1"/>
-                                        <field name="openat_lieferanweisung" invisible="1"/>
-                                        <field name="openat_lt_beschreibung" invisible="1"/>
-                                        <field name="openat_konservierungsmethode_id"/>
-                                        <field name="openat_temp" invisible="1"/>
-                                        <field name="openat_zeit" invisible="1"/>
-                                        <field name="openat_schutzbegasung" invisible="1"/>
-                                        <field name="openat_gaszusammensetzung" invisible="1"/>
-                                        <field name="openat_km_beschreibung" invisible="1"/>
+                                        <field name="openat_bruttofuellgewicht"/>
                                     </group>
                                     <group string="Expiry">
                                         <field name="life_time" string="Expiry (days)"/>
                                         <field name="use_time" string="Remaining Life (days)"/>
                                         <field name="removal_time" invisible="1"/>
                                         <field name="alert_time" invisible="1"/>
+                                    </group>
+                                </group>
+                                <group string="Storage, Transport, Preservation">
+                                    <field name="openat_lagerundtransport_id"/>
+
+                                    <field name="openat_temperatur" invisible="1"/>
+                                    <field name="openat_luftfeuchte" invisible="1"/>
+                                    <field name="openat_licht" invisible="1"/>
+                                    <field name="openat_lageranweisung" invisible="1"/>
+                                    <field name="openat_lieferanweisung" invisible="1"/>
+                                    <field name="openat_lt_beschreibung" invisible="1"/>
+
+                                    <field name="openat_konservierungsmethode_id"/>
+
+                                    <field name="openat_temp" invisible="1"/>
+                                    <field name="openat_zeit" invisible="1"/>
+                                    <field name="openat_schutzbegasung" invisible="1"/>
+                                    <field name="openat_gaszusammensetzung" invisible="1"/>
+                                    <field name="openat_km_beschreibung" invisible="1"/>
+                                </group>
+                                <group string="System Units and Packaging">
+                                    <group>
+                                        <field name="uom_id" on_change="onchange_uom(uom_id,uom_po_id)"/>
+                                        <field name="weight_net"/>
+                                        <field name="weight"/>
+                                    </group>
+                                    <group>
+                                        <field name="uom_po_id" groups="product.group_uom"/>
+                                        <field name="uos_id" groups="product.group_uos"/>
+                                        <field name="uos_coeff" groups="product.group_uos"/>
+                                        <field name="mes_type" groups="product.group_uos"/>
                                     </group>
                                 </group>
                                 <label for="packaging" class="oe_horizontal_separator oe_clear"/>
@@ -157,22 +169,12 @@
                                 </field>
                                 <!-- field name="openat_partnerlines_partner_ids"/ -->
                             </page>
-                            <page string="Misc">
-                                <group string="Miscellaneous">
-                                    <field name="openat_zubereitungshinweise"/>
-                                    <field name="openat_ifs"/>
-                                    <field name="openat_genusstauglichkeitskennzeichen"/>
-                                    <field name="openat_display"/>
-                                </group>
-                                <label for="openat_display_idsy" attrs="{'invisible': [('openat_display','=', False)]}"/>
-                                <field name="openat_display_ids" attrs="{'invisible': [('openat_display','=', False)]}"/>
-                            </page>
                             <page string="Access">
                                 <group>
                                     <group>
                                         <field name="product_manager"/>
                                         <field name="nuts_manager"/>
-                                        <field name="csp_data_date"/>
+                                        <field name="csb_data_date"/>
                                         <field name="nuts_data_date"/>
                                         <field name="user_init" string="- - -"/>
                                         <field name="date_init"/>
@@ -191,56 +193,46 @@
                                     </group>
                                 </group>
                             </page>
-                            <page string="Ingr. / Nut.">
-                                <div style="margin: 2em 0 1.5em 0; color: grey; font-size: 10px">Zutatenliste laut LMIV inkl. QUID - Regelung</div>
-                                <label for="openat_zutatenliste" class="oe_edit_only"/>
+                            <page string="NUTS">
+                                <label for="openat_zutatenliste" placeholder="Laut LMIV inkl. QUID - Regelung"/>
                                 <field name="openat_zutatenliste" placeholder="Zutatenliste laut LMIV inkl. QUID - Regelung"/>
-                                <group string="Nutritional Value">
-                                    <group>
+                                <label for="openat_rohstoffe" style="margin-top: 1em; display: block;"/>
+                                <field name="openat_rohstoffe" placeholder="Zusammensetzung von Gewuerzen und Aromen. Den pflanzlichen Ursprung von oelen, Fetten usw. Art der Kraeuter wenn anwendbar. Verwendete Mikroorganismen bei Joghurt bzw. eingesetzte Kulturen etc."/>
+                                <label for="openat_mikrob_id" style="margin-top: 1em; display: block;"/>
+                                <field name="openat_mikrob_id"/>
+                                <group>
+                                    <group string="Nutritional Value">
                                         <field name="openat_brennwert_kj" color="red"/>
                                         <field name="openat_brennwert_kcal"/>
                                         <field name="openat_fett"/>
                                         <field name="openat_gesaettigte_fettsauren"/>
                                         <field name="openat_einfach_ungesaettigte_fettsauren"/>
                                         <field name="openat_mehrfach_ungesaettigte_fettsauren"/>
-                                    </group>
-                                    <group>
                                         <field name="openat_kohlenhydrate"/>
                                         <field name="openat_kohlenhydrate_zucker"/>
                                         <field name="openat_ballaststoffe"/>
                                         <field name="openat_eiweiss"/>
-                                        <field name="openat_natrium"/>
                                         <field name="openat_salz"/>
+                                        <field name="openat_be"/>
+                                        <div colspan="2" style=" margin-top: 2em; color: grey; font-size: 10px">
+                                            <span style="font-weight: bold">*Nutritional Value BIG 7 (verpflichtend nach LMIV)</span><br />
+                                            Referenzmenge fuer einen durchschnittlichen Erwachsenen (8400 kJ/2000 kcal). Salz (NaCl) berechnet aus Natrium.
+                                        </div>
                                     </group>
-                                </group>
-                                <div style="margin-bottom: 3em; color: grey;">
-                                    <span style="font-weight: bold">*BIG 7 (verpflichtend nach LMIV)</span><br />
-                                    Referenzmenge fuer einen durchschnittlichen Erwachsenen (8400 kJ/2000 kcal). Salz (NaCl) berechnet aus Natrium.
-                                </div>
-                                <group>
-                                    <field name="openat_be"/>
-                                </group>
-                            </page>
-                            <page string="Other Ingr. / Chem.">
-                                <div style="margin: 2em 0 1.5em 0; color: grey; font-size: 10px">
-                                    Details ueber: Zusammensetzung von Gewuerzen und Aromen. Den pflanzlichen Ursprung von oelen, Fetten usw. Art der Kraeuter wenn anwendbar. Verwendete Mikroorganismen bei Joghurt bzw. eingesetzte Kulturen ect..
-                                </div>
-                                <label for="openat_rohstoffe" class="oe_edit_only"/>
-                                <field name="openat_rohstoffe" placeholder="Other Ingredients / Details"/>
-                                <group string="Chem. Assay">
-                                    <group>
+                                    <group string="Chem. Assay">
                                         <field name="openat_chem_wasser"/>
                                         <field name="openat_chem_fett"/>
                                         <field name="openat_chem_eiweiss"/>
                                         <field name="openat_chem_kohlenhydrate"/>
-                                    </group>
-                                    <group>
+                                        <div colspan="2" style="font-weight:bold; margin: 1em 0 0.5em 0; color: #7c7bad;">Minimum Value from Kodex:</div>
                                         <field name="openat_chem_wasser_kodex"/>
                                         <field name="openat_chem_fett_kodex"/>
                                         <field name="openat_chem_eiweiss_kodex"/>
                                         <field name="openat_chem_kohlenhydrate_kodex"/>
                                     </group>
                                 </group>
+                                <label for="openat_zubereitungshinweise" />
+                                <field name="openat_zubereitungshinweise"/>
                             </page>
                             <page string="Allergens">
                                 <group string="Allergens">
@@ -275,47 +267,6 @@
                                 </group>
                                 <div style="margin-bottom: 3em; color: grey;">(Allergene laut LMKV 1993 i.d.g.F.)</div>
                             </page>
-                            <page string="Mikrob.">
-                                <group string="Mikrobiologischen Grenzwerte in KBE / g">
-                                    <group>
-                                        <div style="color: grey;">Bei Ende MHD - Richtwert</div>
-                                        <div style="padding-left: 1em; color: grey;">bei Ende MHD - Hoechstwert</div>
-                                        <group>
-                                            <field name="openat_mikrob_norm_keim"/>
-                                            <field name="openat_mikrob_norm_clost"/>
-                                            <field name="openat_mikrob_norm_coli"/>
-                                            <field name="openat_mikrob_norm_entero"/>
-                                            <field name="openat_mikrob_norm_staphy"/>
-                                            <field name="openat_mikrob_norm_lacto"/>
-                                            <field name="openat_mikrob_norm_cerus"/>
-                                            <field name="openat_mikrob_norm_hefen"/>
-                                            <field name="openat_mikrob_norm_schimmel"/>
-                                            <field name="openat_mikrob_norm_salmonellen"/>
-                                            <field name="openat_mikrob_norm_listeria"/>
-                                            <field name="openat_mikrob_norm_ehec"/>
-                                        </group>
-                                        <group>
-                                            <field name="openat_mikrob_max_keim"/>
-                                            <field name="openat_mikrob_max_clost"/>
-                                            <field name="openat_mikrob_max_coli"/>
-                                            <field name="openat_mikrob_max_entero"/>
-                                            <field name="openat_mikrob_max_staphy"/>
-                                            <field name="openat_mikrob_max_lacto"/>
-                                            <field name="openat_mikrob_max_cerus"/>
-                                            <field name="openat_mikrob_max_hefen"/>
-                                            <field name="openat_mikrob_max_schimmel"/>
-                                            <field name="openat_mikrob_max_salmonellen"/>
-                                            <field name="openat_mikrob_max_listeria"/>
-                                            <field name="openat_mikrob_max_ehec"/>
-                                        </group>
-                                    </group>
-                                </group>
-                                <div style="margin-bottom: 3em; color: grey; font-size: 10px;">
-                                    Muss mindestens den Grenzen der Verordnung EG Nr. 2073/2005 der Kommission ueber
-                                    mikrobiologische Kriterien fuer Lebensmittel und der DGHM entprechend.
-                                    Siehe: <a href="http://www.dghm.org/m_275">http://www.dghm.org/m_275</a>
-                                </div>
-                            </page>
                         </notebook>
                     </sheet>
                     <div class="oe_chatter">
@@ -330,7 +281,7 @@
             <field name="model">product.product</field>
             <field name="arch" type="xml">
                 <tree string="Product Pass" version="7.0" colors="grey:state not in ('pptocheck', 'ppapproved');red:state=='pptocheck';green:state=='ppapproved'">
-                    <field name="openat_csp_nummer"/>
+                    <field name="openat_csb_nummer"/>
                     <field name="name"/>
                     <field name="openat_bezeichnung"/>
                     <field name="openat_verkehrsbezeichnung"/>
@@ -352,9 +303,9 @@
                     <field name="create_date" invisible="True"/>
                     <field name="write_uid" invisible="True"/>
                     <field name="write_date" invisible="True"/>
-                    <field name="date_init" invisible="True"/>
-                    <field name="user_init" invisible="True"/>
-                    <field name="date_update" invisible="True"/>
+                    <!-- field name="date_init" invisible="True"/ -->
+                    <!-- field name="user_init" invisible="True"/ -->
+                    <!-- field name="date_update" invisible="True"/ -->
 
                 </tree>
             </field>
@@ -434,7 +385,7 @@
                     </group>
                     <field name="name" filter_domain="['|', '|', '|',  '|',
                                            ('name','ilike',self),
-                                           ('openat_csp_nummer','ilike',self),
+                                           ('openat_csb_nummer','ilike',self),
                                            ('openat_bezeichnung','ilike',self),
                                            ('openat_verkehrsbezeichnung','ilike',self),
                                            ('openat_partnerlines_ids.name','ilike',self)

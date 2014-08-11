@@ -27,24 +27,28 @@
 Dieses Addon erweiter product.product um eine Vielzahl neuer Felder die speziell fuer die Lebensmittelindusttrie
 relevant sind. Diese neuen Felder sind in Reiter gegliedert und nur über spezielle Zugangsrechte sichtbar.
 
-Die Produkte koennen entweder wie gewohnt in OpenERP angeleget werden oder aber über eine Schnittstelle zu CSP
+Die Produkte koennen entweder wie gewohnt in OpenERP angeleget werden oder aber über eine Schnittstelle zu CSB
 importiert angelegt oder aktualisiert werde.
 
-Einige Daten fuer Produkte die aus CSP importiert wurden können noch durch Informationen des Programmes NUTS ergaenzt
+Einige Daten fuer Produkte die aus CSB importiert wurden können noch durch Informationen des Programmes NUTS ergaenzt
 werden. Dies kann ebenfalls automatisch auf der Basis eines CSV-Exports von NUTS erledigt werden.
     """,
     'author': "OpenAT",
     'website': "http://www.OpenAT.at",
 	'css' : ['static/src/css/style.css'],
     'images': [],
-    'depends': ['base', 'product', 'product_expiry', 'stock', 'purchase', 'document'],
+    'depends': ['base', 'product', 'product_expiry', 'stock', 'purchase', 'document', 'contacts'],
     'data': ['view/openat_produktpass_view.xml',
              'view/openat_produktpass_markenname_view.xml',
              'view/openat_produktpass_lagerundtransport_view.xml',
              'view/openat_produktpass_konservierungsmethode_view.xml',
              'view/openat_produktpass_kennzeichnung_view.xml',
+             'view/openat_produktpass_genusstauglichkeitskennzeichen_view.xml',
+             'view/openat_produktpass_zertifikate_view.xml',
              'view/openat_produktpass_display_view.xml',
-             'view/openat_produktpass_menu.xml'
+             'view/openat_produktpass_mikrob_view.xml',
+             'view/openat_produktpass_menu.xml',
+             'setup.xml'
              ],
     'demo': [],
     'test': [],

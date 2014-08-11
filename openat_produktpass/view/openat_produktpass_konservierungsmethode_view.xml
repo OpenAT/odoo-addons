@@ -48,7 +48,7 @@
         </record>
         <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
         <record model="ir.actions.act_window" id="openat_produktpass_konservierungsmethode_action">
-            <field name="name">Product Pass: Preservation Method</field>
+            <field name="name">Preservation Method</field>
             <field name="res_model">openat_produktpass.konservierungsmethode</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>

@@ -37,7 +37,7 @@
         </record>
         <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
         <record model="ir.actions.act_window" id="openat_produktpass_markenname_action">
-            <field name="name">Product Pass: Storage / Delivery Instructions</field>
+            <field name="name">Brand Names</field>
             <field name="res_model">openat_produktpass.markenname</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>

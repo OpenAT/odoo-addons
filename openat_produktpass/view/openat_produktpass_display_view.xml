@@ -12,7 +12,8 @@
                         <field name="name"/>
                         <field name="openat_bezeichnung"/>
                         <field name="openat_eancode"/>
-                        <field name="produktpass_id"/>
+                        <field name="openat_quantity"/>
+                        <field name="produktpass_id" invisible="True"/>
                     </group>
                 </form>
             </field>
@@ -25,7 +26,8 @@
                     <field name="name"/>
                     <field name="openat_bezeichnung"/>
                     <field name="openat_eancode"/>
-                    <field name="produktpass_id"/>
+                    <field name="openat_quantity"/>
+                    <field name="produktpass_id" invisible="True"/>
                 </tree>
             </field>
         </record>
@@ -43,7 +45,7 @@
         </record>
         <!-- now we create the action + use the below created ir.actions.act_window.view to open the correct form view -->
         <record model="ir.actions.act_window" id="openat_produktpass_display_action">
-            <field name="name">Product Pass: Display</field>
+            <field name="name">Display</field>
             <field name="res_model">openat_produktpass.display</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
