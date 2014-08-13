@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-<data noupdate="0">
+    <!-- Groups and Categories -->
+    <data noupdate="0">
 
-</data>
+    </data>
+
+    <!-- IR Access Rules -->
+    <data noupdate="1">
+
+    </data>
 </openerp>
